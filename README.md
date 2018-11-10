@@ -7,13 +7,11 @@
 1. Four output .txt file, path is ./result/data
    1) cluster.txt
       eg:
-      cluster_size:123
-      
-      “fly_gene_id”,…”worm_gene_id”
       
       cluster_size:123
-      
-      “fly_gene_id”,…”worm_gene_id”
+      "fly_gene_id",…"worm_gene_id"
+      cluster_size:123
+      "fly_gene_id",…"worm_gene_id"
    
    2) fly.txt, store all fly gene id
 
