@@ -8,8 +8,11 @@
    1) cluster.txt
       eg:
       cluster_size:123
+      
       “fly_gene_id”,…”worm_gene_id”
+      
       cluster_size:123
+      
       “fly_gene_id”,…”worm_gene_id”
    
    2) fly.txt, store all fly gene id
