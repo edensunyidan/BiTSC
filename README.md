@@ -1,6 +1,14 @@
 # A Bipartite Tight Spectral Clustering Algorithm for Identifying Conserved Gene Co-clusters
 Yidan Eden Sun and Jingyi Jessica Li
 
+## Requirements
+* Python 3.6
+* numpy
+* pandas
+* json
+* sklearn
+* multiprocessing
+
 ## Implementation details
 
 ### Run BiTSC.py on linux, under the current directory:
