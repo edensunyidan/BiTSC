@@ -8,6 +8,7 @@ Yidan Eden Sun and Jingyi Jessica Li
 * json
 * sklearn
 * multiprocessing
+* Linux
 
 ## Implementation details
 
@@ -21,6 +22,11 @@ python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_mi
 4. k_min: the of number of clusters K_0
 5. alpha: tuning parameter for tightness
 6. root_dir_savedata: path directory of the folder for saving the output data
+
+### A toy example
+```
+python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_min alpha root_dir_savedata & disown
+```
 
 ## Output .txt file in root_dir_savedata:
 1. cluster.txt
