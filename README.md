@@ -40,5 +40,5 @@ python3 BiTSC.py /home/yidan/Downloads/BiTSC-master/data/orthologs_data_uniq.csv
 1. **cluster.txt**
 2. **sideone.txt**, stores the 
 3. **sidetwo.txt**
-4. **consensus_matrix.txt**, stores the consensus matrix (m+n) \times (m+n)
-5. **adjacency_matrix.txt**, stores the bi-adjacency matrix (m \times n)
+4. **consensus_matrix.txt**, stores the consensus matrix $(m+n) \times (m+n)$
+5. **adjacency_matrix.txt**, stores the bi-adjacency matrix $(m \times n)$
