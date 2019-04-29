@@ -37,7 +37,13 @@ python3 BiTSC.py /home/yidan/Downloads/BiTSC-master/data/orthologs_data_uniq.csv
 ```
 
 ### Documentations for the output text files saved in root_dir_savedata:
-1. **cluster.txt**, file for storing the clustering results
+1. **cluster.txt**, file for storing the clustering results, for example:
+```
+cluster_size:5
+"FBgn0005655" "FBgn0011704" "FBgn0011762" "FBgn0014861" "FBgn0015618"  "C14B9.4"   "F10G7.4"   "F29B9.6"  
+cluster_size:
+
+```
 2. **sideone.txt**, file for storing the fly gene IDs
 3. **sidetwo.txt**, file for storing the worm gene IDs
 4. **consensus_matrix.txt**, file for storing the consensus matrix 
