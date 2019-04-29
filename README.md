@@ -32,8 +32,7 @@ python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_mi
 
 ### A toy example
 ```
-python3 BiTSC.py /home/yidan/Dropbox/project_fly_worm/data/EP_pair_spearman.roadmap.chr1.txt
-/home/yidan/Dropbox/project_fly_worm/data/EP_pair_covariant.roadmap.E001.enhancer.chr1.mx /home/yidan/Dropbox/project_fly_worm/data/EP_pair_covariant.roadmap.E001.promoter.chr1.mx 30 0.8 /home/yidan/Dropbox/project_fly_worm/result
+python3 BiTSC.py /home/yidan/Downloads/BiTSC-master/data/orthologs_data_uniq.csv /home/yidan/Downloads/BiTSC-master/data/dm_timecourse_FPKMs.csv /home/yidan/Downloads/BiTSC-master/data/ce_timecourse_FPKMs.csv 30 0.8 /home/yidan/Downloads/BiTSC-master/data/result
 ```
 
 ## Output .txt file in root_dir_savedata:
