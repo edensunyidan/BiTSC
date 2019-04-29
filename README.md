@@ -32,7 +32,8 @@ python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_mi
 
 ### A toy example
 ```
-python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_min alpha root_dir_savedata & disown
+python3 BiTSC.py /home/yidan/Dropbox/project_fly_worm/data/EP_pair_spearman.roadmap.chr1.txt
+/home/yidan/Dropbox/project_fly_worm/data/EP_pair_covariant.roadmap.E001.enhancer.chr1.mx /home/yidan/Dropbox/project_fly_worm/data/EP_pair_covariant.roadmap.E001.promoter.chr1.mx 30 0.8 /home/yidan/Dropbox/project_fly_worm/result
 ```
 
 ## Output .txt file in root_dir_savedata:
