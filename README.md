@@ -22,7 +22,7 @@ cd Downloads/BiTSC-master
 ```
 python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_min alpha root_dir_savedata & disown
 ```
-the input files are: 
+  where the input files are: 
 1. linkage_filepath: path directory of orthology data
 2. sideonedata_filepath: path directory of node covariate matrix on side 1
 3. sidetwodata_filepath: path directory of node covariate matrix on side 2
