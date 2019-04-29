@@ -1,9 +1,7 @@
 # A Bipartite Tight Spectral Clustering Algorithm for Identifying Conserved Gene Co-clusters
 Yidan Eden Sun and Jingyi Jessica Li
 
-## Implementation details
-
-### Requirements
+## Requirements
 * Python 3.6
 * numpy
 * pandas
@@ -12,9 +10,11 @@ Yidan Eden Sun and Jingyi Jessica Li
 * multiprocessing
 * Linux
 
+## Implementation details
+
 ### How to Run
-1. Download the folder, which is named by **BiTSC-master**
-2. In terminal, navigate to the folder, for example:
+1. Download the package from github, which is named by **BiTSC-master**
+2. In terminal, navigate to the folder **BiTSC-master**, for example:
 ```
 cd Downloads/BiTSC-master
 ```
@@ -22,7 +22,8 @@ cd Downloads/BiTSC-master
 ```
 python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_min alpha root_dir_savedata & disown
 ```
-  where the input files are: 
+#### the input files are:
+
 1. linkage_filepath: path directory of orthology data
 2. sideonedata_filepath: path directory of node covariate matrix on side 1
 3. sidetwodata_filepath: path directory of node covariate matrix on side 2
@@ -35,7 +36,7 @@ python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_mi
 python3 BiTSC.py /home/yidan/Downloads/BiTSC-master/data/orthologs_data_uniq.csv /home/yidan/Downloads/BiTSC-master/data/dm_timecourse_FPKMs.csv /home/yidan/Downloads/BiTSC-master/data/ce_timecourse_FPKMs.csv 30 0.8 /home/yidan/Downloads/BiTSC-master/data/result
 ```
 
-## Output .txt file in root_dir_savedata:
+### Output TXT file saved in root_dir_savedata:
 1. cluster.txt
 2. sideone.txt
 3. sidetwo.txt
