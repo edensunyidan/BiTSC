@@ -24,12 +24,12 @@ python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_mi
 ```
 ### Documentations the input files are:
 
-1. linkage_filepath: path directory of orthology data
-2. sideonedata_filepath: path directory of node covariate matrix on side 1
-3. sidetwodata_filepath: path directory of node covariate matrix on side 2
-4. k_min: the of number of clusters K_0
-5. alpha: tuning parameter for tightness
-6. root_dir_savedata: path directory of the folder for saving the output data
+1. **linkage_filepath**: path directory of orthology data
+2. **sideonedata_filepath**: path directory of node covariate matrix on side 1
+3. **sidetwodata_filepath**: path directory of node covariate matrix on side 2
+4. **k_min**: the of number of clusters K_0
+5. **alpha**: tuning parameter for tightness
+6. **root_dir_savedata**: path directory of the folder for saving the output data
 
 ### An example of fly and worm data
 ```
@@ -38,7 +38,7 @@ python3 BiTSC.py /home/yidan/Downloads/BiTSC-master/data/orthologs_data_uniq.csv
 
 ### Documentations for the output text files saved in root_dir_savedata:
 1. cluster.txt
-2. sideone.txt
+2. sideone.txt, stores the 
 3. sidetwo.txt
-4. consensus_matrix.txt, store consensus matrix (m+n) \times (m+n)
-5. adjacency_matrix.txt, store bi-adjacency matrix (m \times n)
+4. consensus_matrix.txt, stores the consensus matrix (m+n) \times (m+n)
+5. adjacency_matrix.txt, stores the bi-adjacency matrix (m \times n)
