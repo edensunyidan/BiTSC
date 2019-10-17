@@ -17,7 +17,7 @@ Yidan Eden Sun, Heather J. Zhou and Jingyi Jessica Li
 
 ### How to Run
 1. Download the package from github, which is named by ```BiTSC-master```
-2. In linux terminal, navigate to the folder **BiTSC-master**, for example:
+2. In linux terminal, navigate to the folder ```BiTSC-master```, for example:
 ```
 cd Downloads/BiTSC-master
 ```
