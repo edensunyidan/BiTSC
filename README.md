@@ -23,7 +23,7 @@ $ cd Downloads/BiTSC-master
 ```
 3. Under the current directory, run:
 ```shell
-python3 BiTSC.py linkage_filepath 
+$ python3 BiTSC.py linkage_filepath 
 sideonedata_filepath sidetwodata_filepath 
 k_min alpha 
 root_dir_savedata & disown
@@ -38,8 +38,8 @@ root_dir_savedata & disown
 6. **root_dir_savedata**: path directory of the folder for saving the output data
 
 ### An example on the fly-worm data
-```
-python3 BiTSC.py /home/yidan/Downloads/BiTSC-master/data/orthologs_data_uniq.csv /home/yidan/Downloads/BiTSC-master/data/dm_timecourse_FPKMs.csv /home/yidan/Downloads/BiTSC-master/data/ce_timecourse_FPKMs.csv 30 0.8 /home/yidan/Downloads/BiTSC-master/data/result
+```console
+$ python3 BiTSC.py /home/yidan/Downloads/BiTSC-master/data/orthologs_data_uniq.csv /home/yidan/Downloads/BiTSC-master/data/dm_timecourse_FPKMs.csv /home/yidan/Downloads/BiTSC-master/data/ce_timecourse_FPKMs.csv 30 0.8 /home/yidan/Downloads/BiTSC-master/data/result
 ```
 
 ### Documentations for the output text files, which are all saved in the folder named by root_dir_savedata:
