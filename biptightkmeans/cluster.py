@@ -24,6 +24,7 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from itertools import product
 from itertools import combinations
+import itertools
 from scipy.stats import spearmanr
 from scipy.stats import pearsonr
 from scipy.stats import rankdata
@@ -42,7 +43,7 @@ from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 from scipy.spatial.distance import euclidean
 from sklearn.metrics.pairwise import euclidean_distances
-from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
+from scipy.cluster.hierarchy import dendrogram, linkage, fcluster, leaves_list
 
 from sklearn.cluster import spectral_clustering
 from sklearn.manifold import spectral_embedding
@@ -55,6 +56,18 @@ import os
 import json
 import time
 import gc
+
+import scanpy as sc
+import anndata
+
+from collections import OrderedDict
+import string
+import copy
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 
 __Author__ = "Yidan Sun"
 
@@ -923,42 +936,7 @@ class BitKmeans:
         return(output)
 
 
-    def find_candidates(self, k, alpha, iteration=5, resamp_num=10):
-        
-        """Algorithm 1: select the candidates of tight clusters
-                        In each iteration, lauch resamp_num sub processes for resampling
-        """
-        """
-        D_bars = []
-        for i in np.arange(resamp_num):
-            D = simulation(Init, k)
-            D_bars.append(D)
-
-        D_bar = sum(D_bars)/resamp_num
-        """
-
-        """
-        #if __name__=="__main__":
-            #os.cpu_count()
-            #with multiprocessing.Pool(PROCESSES) as pool:
-
-        #print("CPU_count: %s" % (multiprocessing.cpu_count()))
-        pool = mp.Pool(processes = multiprocessing.cpu_count())
-        #pool = Pool(processes = 1)
-        D_bars_p = []
-        D_bars = []
-
-        for _ in range(resamp_num):
-            D_bars_p.append(pool.apply_async(simulation, args=(Init, k)))   
-
-        pool.close()
-        pool.join()
-
-        for D in D_bars_p:
-            D_bars.append(D.get())
-
-        D_bar = sum(D_bars)/resamp_num
-        """
+    def find_candidates(self, k, alpha_vec, plot_root_dir, thre_min_cluster_left=10, thre_min_cluster_right=10, thre_min_heatmap_left=10, thre_min_heatmap_right=10, iteration=5, resamp_num=10):
         
         #D_bar = []
         D_bar = 0
@@ -988,7 +966,6 @@ class BitKmeans:
             
             # Get process results from the output queue
             #print("Start getting comembership matrixs from the Queue")
-            #D_bar_sub = [output.get() for p in processes]
             D_bar_sub = 0 #broadcasting
             for p in processes:
                 #D_bar_sub += output.get()
@@ -998,8 +975,6 @@ class BitKmeans:
 
             del co_labels
             gc.collect()
-            #print("length of D_bar_sub: " + str(len(D_bar_sub)))
-            #print((D_bar_sub[0] == D_bar_sub[i]).all())  
 
             # Exit the completed processes
             #print("Start joining the sub-processes")
@@ -1009,15 +984,6 @@ class BitKmeans:
 
             del output
             gc.collect()
-            
-            #D_bar_1 = sum(D_bar_sub)/resamp_num
-            #D_bar_sub = np.sum(D_bar_sub, axis=0, dtype=np.uint16)/resamp_num
-            #D_bar_sub = np.sum(D_bar_sub, axis=0)/resamp_num #this step cause MemoryError
-            #D_bar_sub = sum(D_bar_sub)/resamp_num  ###calculate the co-membership matrix after finishing each iteration to save the memory
-            #D_bar_sub = D_bar_sub/resamp_num
-            
-            #D_bar.append(D_bar_sub)
-            #D_bar += D_bar_sub
             
             D_bar += (D_bar_sub/resamp_num)
             
@@ -1029,35 +995,83 @@ class BitKmeans:
         #D_bar = np.sum(D_bar, axis=0)/iteration
         #D_bar = sum(D_bar)/iteration  ### Membership matrix
         D_bar = D_bar/iteration
-        #print(D_bar)
         
         #D_membership = deepcopy(D_bar)
         D_bar_index = np.concatenate((self.leftindexs, self.rightindexs+self.leftnodes), axis=0)
         #D_com_index = np.concatenate((self.leftindexs, self.rightindexs+self.leftnodes), axis=0)
         #D_com = D_bar[D_com_index][:, D_com_index] #copy from the original 2d array  
         compressed_distance = squareform((1-D_bar), force='tovector', checks=False)
-        Z = linkage(compressed_distance, method='complete')
-        max_d = 1-alpha
-        hclusters = fcluster(Z, t=max_d, criterion='distance') # an array
-        hclusters_nb = np.amax(hclusters) #max(hclusters)
+        print("Start to get the linkage matrix")
+        #Z = linkage(compressed_distance, method='complete', optimal_ordering=True) #slow down the speed
+        Z = linkage(compressed_distance, method='complete', optimal_ordering=False)
+        print("Get the linkage matrix")
+        
+        name_list = [''.join(p) for p in itertools.product(string.ascii_lowercase, string.ascii_lowercase)] #676
+    
+        res = dict()
+        for alpha in alpha_vec:
+            print("Alpha: ", alpha)
+            max_d = 1-alpha
+            #Clutering result: An array of length n. T[i] is the flat cluster number to which original observation i belongs.
+            hclusters = fcluster(Z, t=max_d, criterion='distance')
+            #The list of leaf node indexes as it appears in the tree from left to right.
+            leave_order = leaves_list(Z)
+            #The clustering results ordered(sorted) by the leave_order
+            leave_cluster = hclusters[leave_order]
+            hclusters_nb = np.amax(hclusters) #max(hclusters)
+            
+            print("Get the hierarchical clustering result")
+            #Store the output tight co-clusters
+            res_temp = []
+            hmp = []
+            hmp_cluster = []
+            for hclusters_k_index in range(1, hclusters_nb+1):
+                candidate_cluster = D_bar_index[hclusters == hclusters_k_index]
+                if (sum(candidate_cluster <= np.amax(self.leftindexs)) >= thre_min_cluster_left) and (sum(candidate_cluster >= self.leftnodes) >= thre_min_cluster_right):
+                    res_temp.append(candidate_cluster)
+                candidate_heatmap = D_bar_index[leave_order[leave_cluster == hclusters_k_index]]
+                if (sum(candidate_heatmap <= np.amax(self.leftindexs)) >= thre_min_heatmap_left) and (sum(candidate_heatmap >= self.leftnodes) >= thre_min_heatmap_right):
+                    hmp.append(leave_order[leave_cluster == hclusters_k_index])
+                    hmp_cluster.append(np.repeat(hclusters_k_index, len(candidate_heatmap)))
 
-        res = []
-        for hclusters_k_index in range(1, hclusters_nb+1): 
-            #candidate_index = np.nonzero(hclusters == hclusters_k_index)[0]
-            #candidate = D_membership_index[candidate_index]
-            #Boolean indexing
-            candidate = D_bar_index[hclusters == hclusters_k_index]
-            """do we restrict the co-clusters or clusters only containing single side nodes for the rank_based method???"""
-            if (candidate <= np.amax(self.leftindexs)).any() and (candidate >= self.leftnodes).any(): #len>=2
-                res.append(candidate)
-            #if (len(np.intersect1d(candidate, Init.leftindexs))>0) and (len(np.intersect1d(candidate, Init.rightindexs+Init.leftnodes))>0):
+            ##order = list(reversed(np.argsort(list(map(len, res))))) ###max(res, key=lambda a:len(a))
+            #order = np.argsort(list(map(len, res_temp)))[::-1]
+    
+            ##res = [res[i] for i in order][: top_can]
+            #res_temp = [res_temp[i] for i in order]
+            res[alpha] = res_temp
 
-        #order = list(reversed(np.argsort(list(map(len, res))))) ###max(res, key=lambda a:len(a))
-        order = np.argsort(list(map(len, res)))[::-1]
+            #Construct the sub-consensus matrix
+            hmp = np.array(list(itertools.chain(*hmp)))
+            hmp_cluster = np.array(list(itertools.chain(*hmp_cluster)))
+            hmp_cluster = hmp_cluster.astype(str)
+            D_bar_sub = D_bar[hmp[:, np.newaxis], hmp]
+            
+            #Plot the heatmap of the sub-consensus matrix
+            print("Plot the heatmap")
+            
+            hmp_cluster_idx = hmp_cluster.copy()
+            hmp_cluster_unique = list(OrderedDict.fromkeys(hmp_cluster_idx))
+            ii = 0
+            for ele in hmp_cluster_unique:
+                hmp_cluster[hmp_cluster_idx==ele] = name_list[ii]
+                ii += 1
+            
+            D_bar_sub_obs = pd.DataFrame({'Co-cluster': pd.Series(hmp_cluster, index=list(range(len(hmp))))}, dtype="category")
+            D_bar_sub_var = pd.DataFrame({'Columns': pd.Series(hmp_cluster, index=list(range(len(hmp))))}, dtype="category")
 
-        #res = [res[i] for i in order][: top_can] 
-        res = [res[i] for i in order]
+            D_bar_sub_obs.index.name = 'index'
+            D_bar_sub_var.index.name = 'index'
 
+            D_bar_sub_obs.index = D_bar_sub_obs.index.astype('str', copy=False)
+            D_bar_sub_var.index = D_bar_sub_var.index.astype('str', copy=False)
+
+            D_bar_sub_ann = anndata.AnnData(D_bar_sub, obs=D_bar_sub_obs, var=D_bar_sub_var)
+            sc.pl.heatmap(D_bar_sub_ann, D_bar_sub_ann.var.index.values.tolist(), cmap=plt.cm.Blues, use_raw=False, show_gene_labels=False, figsize=(5,5), groupby='Co-cluster')
+            
+            plt.title('Alpha$=%.2f$' % (alpha))
+            plt.savefig(plot_root_dir+'/Alpha$=%.2f$.pdf'% (alpha))
+    
         return res
     
 
@@ -1444,6 +1458,7 @@ class BitKmeans:
             sub_W = np.concatenate((np.concatenate((np.zeros((sub_A.shape[0], sub_A.shape[0]), dtype=np.uint16), sub_A), axis=1),
                                     np.concatenate((sub_A.T, np.zeros((sub_A.shape[1], sub_A.shape[1]), dtype=np.uint16)), axis=1)), axis=0)
             self.sub_find_connected_components(sub_W)
+        
         """
         #sub_U = self.sub_eigenmatrix_rw(clusters_nb, sub_W)
         sub_U = self.sub_eigenmatrix_sym(30, sub_W) # l = K
@@ -1451,7 +1466,7 @@ class BitKmeans:
         
         #print("Sub process","PID: %s, Process Name: %s, randomly choose left points: %s and right points: %s" % (os.getpid(), mp.current_process().name, sum(lmask), sum(rmask)))
         ###clusters_nb < sub_U.shape[0] !
-                                                                                                                                            
+        
         kmeans = KMeans(n_clusters=clusters_nb, init='k-means++', n_init=10, max_iter=300, tol=0.0001,
                         precompute_distances='auto', verbose=0, random_state=None, copy_x=True, n_jobs=1,
                         algorithm='auto').fit(sub_U)
@@ -1469,10 +1484,12 @@ class BitKmeans:
                         algorithm='auto').fit(sub_U)
         labels = kmeans.labels_ #numpy.array dtype=int32
         """
-
+  
+  
         labels = spectral_clustering(affinity=sub_W, n_clusters=clusters_nb, n_components=30, eigen_solver=None,
                                      random_state=None, n_init=10, eigen_tol=0.0, assign_labels='kmeans')
-       
+        
+        
         #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "finish the KMeans")
         """
         left_labels = labels[ : self.m]  #llabels = labels[np.arange(Init.m)]
@@ -1531,7 +1548,7 @@ class BitKmeans:
         #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "end.")
 
 
-    def fit_hierarchical_clustering(self, k, alpha, iteration, resamp_num):
+    def fit_hierarchical_clustering(self, k, alpha_vec, plot_root_dir, thre_min_cluster_left, thre_min_cluster_right, thre_min_heatmap_left,thre_min_heatmap_right, iteration, resamp_num):
         ###we can add the heatmap of the comembership matrix to check???
         
         print("hierarchical clustering with the (same kernel embedded) inherited bi-adjacency matrix get called")
@@ -1547,43 +1564,48 @@ class BitKmeans:
         #np.random.seed(seed=int(time.time()))
         print("CPU_count: %s" % (mp.cpu_count()))
         print("Main process","PID: %s, Process Name: %s" % (os.getpid(), mp.current_process().name), "start working")
-                                        
-        tclust = []
-        tclust_id = []
-        
+
         print("k = ", k)
-        result = self.find_candidates(k, alpha, iteration, resamp_num) #list of arrays (tight clusters candidate)
+        output = dict()
+        result = self.find_candidates(k, alpha_vec, plot_root_dir, thre_min_cluster_left, thre_min_cluster_right, thre_min_heatmap_left,thre_min_heatmap_right, iteration, resamp_num) #list of arrays (tight clusters candidate)
         #result = result.tolist()
-                                        
-        for found_temp in result:
-            found_temp = list(map(int, found_temp))
-            #tclust.append(found_temp)
-            sub_tclust_id = []
-                                        
-            for index_i in found_temp:
-                if index_i in self.leftindexs:
-                    #self.leftindexs = self.leftindexs[self.leftindexs != index_i]
-                    found_id = self.left_id[index_i]
-                else:
-                    #self.rightindexs = self.rightindexs[self.rightindexs != (index_i - self.leftnodes)]
-                    found_id = self.right_id[(index_i - self.leftnodes)]
-                                        
-                sub_tclust_id.append(found_id)
-                                        
-            tclust.append(found_temp)
-            tclust_id.append(sub_tclust_id)
-            print("Cluster size: "+ str(len(found_temp)))
-            #print("Cluster index: ", found_temp)
-            print("Cluster id: ", sub_tclust_id)
-                                        
-        left_id = (self.left_id).tolist()
-        right_id = (self.right_id).tolist()
-        output = dict(tclust=tclust, tclust_id = tclust_id, left_id=left_id, right_id=right_id)
-        ###separate fly genes with worm genes in a co-cluster
-        #tclust_id[i][tclust[i] < len(left_id)]
-        #tclust_id[i][tclust[i] > len(left_id)]
-        self.estimated_k = len(tclust)
-        print("Number of co-clusters found by hierarchical clustering (one-step tsc)" + str(self.estimated_k))
+        for alpha in alpha_vec:
+            result_alpha = result[alpha]
+            tclust = []
+            tclust_id = []
+            for found_temp in result_alpha:
+                found_temp = list(map(int, found_temp))
+                #tclust.append(found_temp)
+                sub_tclust_id = []
+                
+                for index_i in found_temp:
+                    if index_i in self.leftindexs:
+                        #self.leftindexs = self.leftindexs[self.leftindexs != index_i]
+                        found_id = self.left_id[index_i]
+                    else:
+                        #self.rightindexs = self.rightindexs[self.rightindexs != (index_i - self.leftnodes)]
+                        found_id = self.right_id[(index_i - self.leftnodes)]
+                    
+                    sub_tclust_id.append(found_id)
+                
+                tclust.append(found_temp)
+                tclust_id.append(sub_tclust_id)
+ 
+            
+            #output_alpha = dict(tclust=tclust, tclust_id = tclust_id, left_id=left_id, right_id=right_id)
+            output_alpha = dict(tclust=tclust, tclust_id=tclust_id)
+            ###separate fly genes with worm genes in a co-cluster
+            #tclust_id[i][tclust[i] < len(left_id)]
+            #tclust_id[i][tclust[i] > len(left_id)]
+            #self.estimated_k = len(tclust)
+            #print("Number of co-clusters found by hierarchical clustering (one-step tsc)" + str(self.estimated_k))
+            output[alpha] = output_alpha
+        
+        #Output gene lists which does not vary with alpha
+  
+        output['left_id']=(self.left_id).tolist()
+        output['right_id']=(self.right_id).tolist()
+
         return(output)
             
 
