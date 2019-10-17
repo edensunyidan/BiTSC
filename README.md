@@ -23,7 +23,10 @@ cd Downloads/BiTSC-master
 ```
 3. Under the current directory, run:
 ```
-python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_min alpha root_dir_savedata & disown
+python3 BiTSC.py linkage_filepath 
+sideonedata_filepath sidetwodata_filepath 
+k_min alpha 
+root_dir_savedata & disown
 ```
 ### Documentations the input data files and parameters:
 
