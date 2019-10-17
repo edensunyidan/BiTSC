@@ -2,7 +2,7 @@
 Yidan Eden Sun and Jingyi Jessica Li
 
 ## Requirements
-* Python 3.6
+* Python 3.6.8
 * numpy
 * scipy
 * pandas
@@ -25,7 +25,7 @@ cd Downloads/BiTSC-master
 ```
 python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath k_min alpha root_dir_savedata & disown
 ```
-### Documentations the input files and data:
+### Documentations the input data files and parameters:
 
 1. **linkage_filepath**: path directory of orthology data
 2. **sideonedata_filepath**: path directory of node covariate matrix on side 1
