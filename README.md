@@ -23,16 +23,17 @@ $ cd Downloads/BiTSC-master
 ```
 3. In current directory, run:
 ```console
-$ python3 BiTSC.py linkage_filepath sideonedata_filepath sidetwodata_filepath Kcluster alpha out_dir & disown
+$ python3 BiTSC.py linkage_filepath sideone_filepath sidetwo_filepath Kcluster alpha out_dir ncores & disown
 ```
 ### Documentations the input data files and parameters:
 
-1. **linkage_filepath**: path directory of orthology data
-2. **sideonedata_filepath**: path directory of node covariate matrix on side 1
-3. **sidetwodata_filepath**: path directory of node covariate matrix on side 2
+1. **linkage_filedir**: full path directory of orthology data
+2. **sideone_filedir**: full path directory of node covariate matrix on side 1
+3. **sidetwo_filedir**: full path directory of node covariate matrix on side 2
 4. **Kcluster**: the of number of clusters K_0
 5. **alpha**: tuning parameter for tightness
-6. **out_dir**: path directory of the folder for saving the output data
+6. **out_folderdir**: full path to output folder directory
+7. **ncores**: number of cores used in parallel computation
 
 ### An example on the fly-worm data
 ```console
