@@ -4,10 +4,13 @@ Yidan Eden Sun and Jingyi Jessica Li
 ## Requirements
 * Python 3.6
 * numpy
+* scipy
 * pandas
 * json
 * sklearn
 * multiprocessing
+* scanpy
+* anndata
 * Linux
 
 ## Implementation details
