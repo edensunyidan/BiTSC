@@ -936,7 +936,7 @@ class BitKmeans:
         return(output)
 
 
-    def find_candidates(self, k, alpha_vec, plot_root_dir, thre_min_cluster_left=10, thre_min_cluster_right=10, thre_min_heatmap_left=10, thre_min_heatmap_right=10, iteration=5, resamp_num=10):
+    def find_candidates(self, k, alpha_vec, plot_root_dir, thre_min_cluster_left=10, thre_min_cluster_right=10, iteration=5, resamp_num=10):
         
         #D_bar = []
         D_bar = 0
@@ -1030,7 +1030,7 @@ class BitKmeans:
                 if (sum(candidate_cluster <= np.amax(self.leftindexs)) >= thre_min_cluster_left) and (sum(candidate_cluster >= self.leftnodes) >= thre_min_cluster_right):
                     res_temp.append(candidate_cluster)
                 candidate_heatmap = D_bar_index[leave_order[leave_cluster == hclusters_k_index]]
-                if (sum(candidate_heatmap <= np.amax(self.leftindexs)) >= thre_min_heatmap_left) and (sum(candidate_heatmap >= self.leftnodes) >= thre_min_heatmap_right):
+                if (sum(candidate_heatmap <= np.amax(self.leftindexs)) >= thre_min_cluster_left) and (sum(candidate_heatmap >= self.leftnodes) >= thre_min_cluster_right):
                     hmp.append(leave_order[leave_cluster == hclusters_k_index])
                     hmp_cluster.append(np.repeat(hclusters_k_index, len(candidate_heatmap)))
 
@@ -1548,7 +1548,7 @@ class BitKmeans:
         #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "end.")
 
 
-    def fit_hierarchical_clustering(self, k, alpha_vec, plot_root_dir, thre_min_cluster_left, thre_min_cluster_right, thre_min_heatmap_left,thre_min_heatmap_right, iteration, resamp_num):
+    def fit_hierarchical_clustering(self, k, alpha_vec, plot_root_dir, thre_min_cluster_left, thre_min_cluster_right, iteration, resamp_num):
         ###we can add the heatmap of the comembership matrix to check???
         
         print("hierarchical clustering with the (same kernel embedded) inherited bi-adjacency matrix get called")
@@ -1567,7 +1567,7 @@ class BitKmeans:
 
         print("k = ", k)
         output = dict()
-        result = self.find_candidates(k, alpha_vec, plot_root_dir, thre_min_cluster_left, thre_min_cluster_right, thre_min_heatmap_left,thre_min_heatmap_right, iteration, resamp_num) #list of arrays (tight clusters candidate)
+        result = self.find_candidates(k, alpha_vec, plot_root_dir, thre_min_cluster_left, thre_min_cluster_right,iteration, resamp_num) #list of arrays (tight clusters candidate)
         #result = result.tolist()
         for alpha in alpha_vec:
             result_alpha = result[alpha]
@@ -1603,8 +1603,8 @@ class BitKmeans:
         
         #Output gene lists which does not vary with alpha
   
-        output['left_id']=(self.left_id).tolist()
-        output['right_id']=(self.right_id).tolist()
+        #output['left_id']=(self.left_id).tolist()
+        #output['right_id']=(self.right_id).tolist()
 
         return(output)
             
