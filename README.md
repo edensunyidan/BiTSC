@@ -31,7 +31,7 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster alpha out_dir ncores niter
 2. **one_dir**: full path to node covariate data .csv file on side 1
 3. **two_dir**: full path to node covariate data .csv file on side 2
 4. **Kcluster**: input number of co-clusters
-5. **alpha**: tuning parameter for tightness
+5. **alpha**: vector for tuning parameter for tightness
 6. **out_dir**: full path to output folder directory
 7. **ncores**: number of cores used in parallel computation
 8. **niters**: number of iterations to run 
