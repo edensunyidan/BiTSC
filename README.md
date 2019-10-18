@@ -46,7 +46,5 @@ cluster_size:2
 oneID4, oneID5, oneID6, oneID7, twoID5, twoID6
 ...
 ```
-2. **sideone.txt**, file for storing the fly gene IDs
-3. **sidetwo.txt**, file for storing the worm gene IDs
-4. **consensus_matrix.txt**, file for storing the consensus matrix 
-5. **adjacency_matrix.txt**, file for storing the bi-adjacency matrix 
+2. ```sideone.txt```, file for storing the fly gene IDs
+3. ```sidetwo.txt```, file for storing the worm gene IDs
