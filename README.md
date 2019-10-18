@@ -23,7 +23,7 @@ $ cd Downloads/BiTSC-master
 ```
 3. In current directory, run:
 ```console
-$ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster alpha out_dir ncores niters subprop & disown
+$ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster out_dir ncores niters subprop alpha & disown
 ```
 ### Documentations of input data files and parameters:
 
@@ -31,11 +31,11 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster alpha out_dir ncores niter
 2. **one_dir**: full path to node covariate data .csv file on side 1
 3. **two_dir**: full path to node covariate data .csv file on side 2
 4. **Kcluster**: input number of co-clusters
-5. **alpha**: vector for tuning parameter for tightness
-6. **out_dir**: full path to output folder directory
-7. **ncores**: number of cores used in parallel computation
-8. **niters**: number of iterations to run 
-9. **subprop**: subsampling proportion in each iteration 
+5. **out_dir**: full path to output folder directory
+6. **ncores**: number of cores used in parallel computation
+7. **niters**: number of iterations to run 
+8. **subprop**: subsampling proportion in each iteration 
+9. **alpha**: vector for tuning parameter for tightness
 
 ### Documentations of output text files, which are all saved in the folder named by root_dir_savedata:
 1. **cluster.txt**, file for storing the clustering results, for example:
