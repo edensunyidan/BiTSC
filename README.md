@@ -39,7 +39,7 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster out_dir ncores niters subp
 10. ```out_dir```: path to output folder directory
 11. ```alphas```: a series of tightness tuning parameters
 
-### Documentations of output text files, which are all saved in the folder named by root_dir_savedata:
+### Documentations of output text files
 1. ```cluster.txt```, file for storing the clustering results, for example:
 ```
 cluster_size:1
