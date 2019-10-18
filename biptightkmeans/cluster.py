@@ -87,7 +87,7 @@ __Author__ = "Yidan Sun"
 class BitKmeans:
     """Bipartite Tight Kmeans clustering"""
     
-    def __init__(self, left_raw_data, right_raw_data, orthologs_data, samp_p, tao, drop=False, kernel=False, rank_based=False, value_based=False, gamma=None, simulation_type='tsc', use_pca=False, rank_d=5, value_t=0.95):    
+    def __init__(self, left_raw_data, right_raw_data, orthologs_data, samp_p, tao, drop=False, kernel=False, rank_based=False, value_based=False, gamma=None, simulation_type='sp_tsc', use_pca=False, rank_d=5, value_t=0.95):
         
         self.left_data = left_raw_data.copy()
         self.right_data = right_raw_data.copy()
