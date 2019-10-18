@@ -31,12 +31,12 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster out_dir ncores niters subp
 2. ```one_dir```: full path to node covariate data .csv file on side 1
 3. ```two_dir```: full path to node covariate data .csv file on side 2
 4. ```Kcluster```: input number of co-clusters
-5. ```out_dir```: full path to output folder directory
-6. ```ncores```: number of cores used in parallel computation
-7. ```niters```: number of iterations to run 
-8. ```subprop```: subsampling proportion in each iteration 
-9. ```one_thre```: minimum number of side 1 nodes in each output co-cluster 
-10. ```two_thre```: minimum number of side 2 nodes in each output co-cluster
+5. ```ncores```: number of cores used in parallel computation
+6. ```niters```: number of iterations to run 
+7. ```subprop```: subsampling proportion in each iteration 
+8. ```one_thre```: minimum number of side 1 nodes in each output co-cluster 
+9. ```two_thre```: minimum number of side 2 nodes in each output co-cluster
+10. ```out_dir```: full path to output folder directory
 11. ```alphas```: a series of tightness tuning parameters
 
 ### Documentations of output text files, which are all saved in the folder named by root_dir_savedata:
