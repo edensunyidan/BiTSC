@@ -49,8 +49,8 @@ oneID4, oneID5, oneID6, oneID7, twoID5, twoID6
 cluster_size:3
 ...
 ```
-2. ```Alpha=a_value.pdf```, heatmaps of sub-consensus matrices corresponding to alphas
+2. ```Alpha=a_value.pdf```, heatmaps of sub-consensus matrices corresponding to ```alphas```
 ### An example on the fly-worm data
 ```console
-$ python3 BiTSC.py ./data/orthologs_data_uniq.csv ./data/dm_timecourse_FPKMs.csv ./ce_timecourse_FPKMs.csv 30 0.8 ./data/result
+$ python3 BiTSC.py ./data/orthologs_data_uniq.csv ./data/dm_timecourse_FPKMs.csv ./ce_timecourse_FPKMs.csv 30 10 100 0.8 10 10 ./data/result 0.90 0.95 1.00
 ```
