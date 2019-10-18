@@ -1,4 +1,4 @@
-# Bipartite Tight Spectral Clustering (BiTSC) Algorithm for Identifying Conserved GeneCo-clusters in Two Species
+# Bipartite Tight Spectral Clustering (BiTSC) Algorithm for Identifying Conserved Gene Co-clusters in Two Species
 Yidan Eden Sun, Heather J. Zhou and Jingyi Jessica Li
 
 ## Requirements
