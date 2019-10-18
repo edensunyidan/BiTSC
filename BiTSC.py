@@ -25,13 +25,11 @@ if __name__ == "__main__":
     print("enhancer raw data size: ", sideone_raw_data.shape[0])
     print("promoter raw data size: ", sidetwo_raw_data.shape[0])
     
-    samp_p = 0.8
 
     tao = 1
     weights=True
     drop=True
-    
-    #kernel=False
+
     kernel = True
     
     gamma=None
@@ -39,47 +37,46 @@ if __name__ == "__main__":
     log_transform=False
     standardization=True
     use_pca=False
-    
-    #####################################################
-    process = True
-    #####################################################
 
+    #################################################################################################################
     bitkmeans = BitKmeans(left_raw_data=sideone_raw_data, right_raw_data=sidetwo_raw_data, orthologs_data=linkage_data,
                           samp_p=samp_p, tao=tao, weights=weights, drop=drop, kernel=kernel, gamma=gamma,
                           simulation_type=simulation_type, log_transform=log_transform, standardization=standardization, use_pca=use_pca)
                           
     #bitkmeans.eigenmatrix_sym(K = 500)
-    #####################################################
-    if process == True:
+    #################################################################################################################
         
-        k_min = int(sys.argv[4]) #default = 30
+    k_min = int(sys.argv[4])
+
+    resamp_num = int(sys.argv[5])
+    iteration = int(int(sys.argv[6])/resamp_num)
    
-        alpha = float(sys.argv[5])  #default = 0.8
+    samp_p = float(sys.argv[7])
     
-        iteration = 10
-        resamp_num = 10
-
-        output_hc = bitkmeans.fit_hierarchical_clustering(k=k_min, alpha=alpha, iteration=iteration, resamp_num=resamp_num)
-
-        root_dir_savedata = sys.argv[6]
-        try:
-            os.mkdir(root_dir_savedata)
-        except FileExistsError:
-            pass
+    one_thre = int(sys.argv[8])
+    two_thre = int(sys.argv[9])
     
-        with open(root_dir_savedata+"cluster.txt", 'w') as file_object:
-            for sub_tclust_id in output_hc['tclust_id']:
-                file_object.write("cluster_size:"+str(len(sub_tclust_id))+"\t")
-                file_object.write(",".join(sub_tclust_id)+"\n")
-
-        with open(root_dir_savedata+"sideone.txt", 'w') as file_object:
-            file_object.write(",".join(output_hc['left_id']))
-
-        with open(root_dir_savedata+"sidetwo.txt", 'w') as file_object:
-            file_object.write(",".join(output_hc['right_id']))
-        
-        np.savetxt(root_dir_savedata+"consensus_matrix.txt", output_hc['consensus_matrix'])
-        np.savetxt(root_dir_savedata+"adjacency_matrix.txt", output_hc['adjacency_matrix'])
+    root_dir_savedata = sys.argv[10]
     
-        del output_hc
-        gc.collect()
+    arguments = len(sys.argv) - 1
+    alpha_vec = []
+    for i in range(11, arguments+1):
+        alpha = float(sys.argv[i])
+        alpha_vec = alpha_vec.append(alpha)
+
+    output_hc = bitkmeans.fit_hierarchical_clustering(k=k_min, alpha_vec=alpha_vec, plot_root_dir=root_dir_savedata,
+                                                      thre_min_cluster_left=one_thre, thre_min_cluster_right=two_thre,
+                                                      iteration=iteration, resamp_num=resamp_num)
+
+    try:
+        os.mkdir(root_dir_savedata)
+    except FileExistsError:
+        pass
+    
+    with open(root_dir_savedata+"/cluster.txt", 'w') as file_object:
+        for sub_tclust_id in output_hc['tclust_id']:
+            file_object.write("cluster_size:"+str(len(sub_tclust_id))+"\t")
+            file_object.write(",".join(sub_tclust_id)+"\n")
+    
+    del output_hc
+    gc.collect()
