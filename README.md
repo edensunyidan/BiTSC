@@ -27,7 +27,7 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster out_dir ncores niters subp
 ```
 ### Documentations of input data files and parameters:
 
-1. **ortho_dir**: full path to orthology data .csv file
+1. ```ortho_dir```: full path to orthology data .csv file
 2. **one_dir**: full path to node covariate data .csv file on side 1
 3. **two_dir**: full path to node covariate data .csv file on side 2
 4. **Kcluster**: input number of co-clusters
@@ -48,9 +48,7 @@ cluster_size:2
 oneID4, oneID5, oneID6, oneID7, twoID5, twoID6
 ...
 ```
-2. ```sideone.txt```, file for storing the fly gene IDs
-3. ```sidetwo.txt```, file for storing the worm gene IDs
-
+2. 
 ### An example on the fly-worm data
 ```console
 $ python3 BiTSC.py ./data/orthologs_data_uniq.csv ./data/dm_timecourse_FPKMs.csv ./ce_timecourse_FPKMs.csv 30 0.8 ./data/result
