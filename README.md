@@ -23,7 +23,7 @@ $ cd Downloads/BiTSC-master
 ```
 3. In current directory, run:
 ```console
-$ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster alpha out_dir ncores & disown
+$ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster alpha out_dir ncores niters subprop & disown
 ```
 ### Documentations the input data files and parameters:
 
@@ -34,6 +34,8 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster alpha out_dir ncores & dis
 5. **alpha**: tuning parameter for tightness
 6. **out_dir**: full path to output folder directory
 7. **ncores**: number of cores used in parallel computation
+8. **niters**: number of iterations to run 
+9. **subprop**: subsampling proportion in each iteration 
 
 ### An example on the fly-worm data
 ```console
