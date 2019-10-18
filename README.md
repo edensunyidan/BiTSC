@@ -25,7 +25,7 @@ $ cd Downloads/BiTSC-master
 ```console
 $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster alpha out_dir ncores niters subprop & disown
 ```
-### Documentations the input data files and parameters:
+### Documentations of input data files and parameters:
 
 1. **ortho_dir**: full path to orthology data, .csv file
 2. **one_dir**: full path to node covariate matrix, .csv file on side 1
@@ -42,7 +42,7 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster alpha out_dir ncores niter
 $ python3 BiTSC.py /home/yidan/Downloads/BiTSC-master/data/orthologs_data_uniq.csv /home/yidan/Downloads/BiTSC-master/data/dm_timecourse_FPKMs.csv /home/yidan/Downloads/BiTSC-master/data/ce_timecourse_FPKMs.csv 30 0.8 /home/yidan/Downloads/BiTSC-master/data/result
 ```
 
-### Documentations for the output text files, which are all saved in the folder named by root_dir_savedata:
+### Documentations of output text files, which are all saved in the folder named by root_dir_savedata:
 1. **cluster.txt**, file for storing the clustering results, for example:
 ```
 cluster_size:37 FBgn0004244,FBgn0004573,FBgn0010329,FBgn0010414,FBgn0011582,FBgn0013334,FBgn0015519,FBgn0016975,FBgn0029846,FBgn0032151,FBgn0033876,FBgn0033958,FBgn0034136,FBgn0035170,FBgn0035364,FBgn0035756,FBgn0036934,FBgn0037698,FBgn003829,FBgn0038880,FBgn0039536,FBgn0051191,FBgn0052683,FBgn0053516,FBgn0053517,FBgn0053543,FBgn0085385,FBgn0259222,FBgn0259927,FBgn0260657,FBgn0261090,FBgn0261262,B0212.5,D2021.2,F47D12.1,ZC155.5,ZC196.7
