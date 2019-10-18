@@ -48,3 +48,8 @@ oneID4, oneID5, oneID6, oneID7, twoID5, twoID6
 ```
 2. ```sideone.txt```, file for storing the fly gene IDs
 3. ```sidetwo.txt```, file for storing the worm gene IDs
+
+### An example on the fly-worm data
+```console
+$ python3 BiTSC.py ./data/orthologs_data_uniq.csv ./data/dm_timecourse_FPKMs.csv ./ce_timecourse_FPKMs.csv 30 0.8 ./data/result
+```
