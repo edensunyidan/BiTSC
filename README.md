@@ -27,10 +27,10 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster alpha out_dir ncores & dis
 ```
 ### Documentations the input data files and parameters:
 
-1. **ortho_dir**: full path directory of orthology data .csv file
-2. **one_dir**: full path directory of node covariate matrix .csv file on side 1
-3. **two_dir**: full path directory of node covariate matrix .csv file on side 2
-4. **Kcluster**: the of number of clusters K_0
+1. **ortho_dir**: full path to orthology data, .csv file
+2. **one_dir**: full path to node covariate matrix, .csv file on side 1
+3. **two_dir**: full path to node covariate matrix, .csv file on side 2
+4. **Kcluster**: number of co-clusters
 5. **alpha**: tuning parameter for tightness
 6. **out_dir**: full path to output folder directory
 7. **ncores**: number of cores used in parallel computation
