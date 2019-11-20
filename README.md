@@ -40,7 +40,7 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster out_dir ncores niters subp
 11. ```alphas```: a series of tightness tuning parameters
 
 ### Output files:
-1. ```cluster.txt```, file for storing the clustering results, for example:
+1. ```cluster.txt```, file for storing the clustering results
 
 2. ```Alpha=a_value.pdf```, heatmaps of sub-consensus matrices corresponding to ```alphas```
 
