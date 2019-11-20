@@ -15,7 +15,7 @@ Yidan Eden Sun, Heather J. Zhou and Jingyi Jessica Li
 
 ## Implementation details
 
-### How to Run
+### How to Run:
 1. Download the package from github, which is named by ```BiTSC-master```
 2. In Linux terminal, navigate to the folder ```BiTSC-master```, for example:
 ```shell
@@ -25,7 +25,7 @@ $ cd Downloads/BiTSC-master
 ```console
 $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster out_dir ncores niters subprop one_thre two_thre alphas & disown
 ```
-### Documentations of input data files and parameters:
+### Input data files and parameters:
 
 1. ```ortho_dir```: path to orthology data .csv file
 2. ```one_dir```: path to node covariate data .csv file on side 1
@@ -39,18 +39,12 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster out_dir ncores niters subp
 10. ```out_dir```: path to output folder directory
 11. ```alphas```: a series of tightness tuning parameters
 
-### Documentations of output text files
+### Output files:
 1. ```cluster.txt```, file for storing the clustering results, for example:
-```
-cluster_size:1
-oneID1, oneID2, oneID3, twoID1, twoID2, twoID3, twoID4    
-cluster_size:2 
-oneID4, oneID5, oneID6, oneID7, twoID5, twoID6
-cluster_size:3
-...
-```
+
 2. ```Alpha=a_value.pdf```, heatmaps of sub-consensus matrices corresponding to ```alphas```
-### An example on the fly-worm data
+
+### An example on the fly-worm data:
 In the directory of ```BiTSC-master```, run:
 ```console
 $ python3 BiTSC.py ./data/orthologs_data_uniq.csv ./data/dm_timecourse_FPKMs.csv ./data/ce_timecourse_FPKMs.csv 30 10 100 0.8 10 10 ./data/result 0.90 0.95 1.00
