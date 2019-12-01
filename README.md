@@ -11,7 +11,7 @@ Yidan Eden Sun, Heather J. Zhou and Jingyi Jessica Li
 * multiprocessing
 * scanpy
 * anndata
-* Linux
+* Ubuntu 16.04.6 LTS (GNU/Linux 4.4.0-157-generic x86_64)
 
 ## Implementation details
 
