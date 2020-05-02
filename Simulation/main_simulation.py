@@ -14,9 +14,6 @@ __Author__ = "Yidan Sun"
 
 if __name__ == "__main__":
     
-    #import matplotlib
-    #matplotlib.use('Agg')
-    #import matplotlib.pyplot as plt
     
     M, N = (80, 120)
     
