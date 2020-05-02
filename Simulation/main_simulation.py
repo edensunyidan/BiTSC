@@ -10,13 +10,7 @@ import json
 import math
 
 __Author__ = "Yidan Sun"
-#root_dir = 'project_fly_worm/result/figure'
-#root_dir = '/home/yidan/Dropbox/project_fly_worm/simulation/result/figure'
 
-"""加不加kernel 都是keep fully connected component ???"""
-
-
-# In[ ]:
 
 if __name__ == "__main__":
     
