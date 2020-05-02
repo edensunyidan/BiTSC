@@ -23,7 +23,7 @@ $ cd Downloads/BiTSC-master
 ```
 3. In current directory, run:
 ```console
-$ python3 BiTSC.py ortho_dir one_dir two_dir Kcluster out_dir ncores niters subprop one_thre two_thre alphas & disown
+$ python3 BiTSC.py ortho_dir one_dir two_dir K_0_min K_0_max out_dir ncores niters subprop one_thre two_thre alphas & disown
 ```
 ### Input data files and parameters:
 
