@@ -1,8 +1,3 @@
-
-# coding: utf-8
-
-# In[ ]:
-
 import sys
 from simdata.synthetic_data import SimData
 import numpy as np
@@ -10,11 +5,6 @@ import json
 import math
 
 __Author__ = "Yidan Sun"
-#root_dir = 'project_fly_worm/result/figure'
-#root_dir = '/home/yidan/Dropbox/project_fly_worm/simulation/result/figure'
-
-
-# In[ ]:
 
 if __name__ == "__main__":
     
