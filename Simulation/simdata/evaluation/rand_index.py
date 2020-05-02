@@ -1,15 +1,8 @@
-
-# coding: utf-8
-
-# In[2]:
-
 import numpy as np
 from scipy.special import comb
 from sklearn.metrics.cluster import contingency_matrix
 from sklearn.metrics import adjusted_rand_score 
 
-
-# In[ ]:
 
 """
 References
@@ -91,13 +84,6 @@ ari : float
 
 """
 
-
-# In[ ]:
-
-
-
-
-# In[251]:
 
 def check_clusterings(labels_true, labels_pred):
     """Check that the two clusterings matching 1D integer arrays."""
@@ -214,29 +200,5 @@ def weighted_rand_score(labels_true, labels_pred):
     rand_one = adjusted_rand_score(labels_true['indexs'], labels_pred['indexs'])
     
     return (lambda_*rand_one + (1-lambda_)*rand_two)
-
-
-# In[252]:
-
-if __name__ == "__main__":
-    ###test the no noise nodes cases
-    ####weighted_rand_score == adjusted_rand_score == adjusted_rand_score_nonoise
-    a = np.array([0,0,1,1,2,2,5,3,4,4,1,1,2,4,5,5], dtype=np.uint16)
-    b = np.array([1,1,1,2,1,0,1,1,1,1,3,3,4,4,5,5], dtype=np.uint32)
-    c = np.array([5,5,1,1,2,2,5,3,4,4,1,1,2,4,0,0])
-    
-    labels_true = dict(indexs=a, noise=False)
-    labels_pred = dict(indexs=b, noise=False)
-    
-    print(adjusted_rand_score(labels_true['indexs'], labels_pred['indexs']))
-    print(adjusted_rand_score_nonoise(labels_true, labels_pred))
-    print(weighted_rand_score(labels_true, labels_pred))
-    
-    contingency = contingency_matrix(labels_true['indexs'], labels_pred['indexs'], eps=None, sparse=False)
-    print(contingency)
-
-
-# In[ ]:
-
 
 
