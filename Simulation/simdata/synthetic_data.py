@@ -1,167 +1,4 @@
-
-# coding: utf-8
-
-# In[ ]:
-
-"""
-[George C. Tseng 2006] Evaluation and comparison of gene clustering methods in microarray analysis
-a number (0, 5, 10, 20, 60, 100 and 200% of the original total number of clustered genes) 
-of randomly simulated scattered genes are added. For sample j (j = 1,...,50) in a scattered gene,
-the expression level is randomly sampled from the empirical distribution of expressions of all clustered genes in sample j
-"""
-
-"""
-Recover the true labels in synthetic bipartite networks with noise nodes
-"""
-
-"""
-Generate the mean vectors of the distribution in each true cluster: multivariate gaussian distribution
-\mu_1, \mu_2, ... \mu_K ~ N(\mu, \sigma)
-
-Generate the node covariates in each true cluster: two standard deviations from the mean vector,
-for dimension d, x_i[d] ~ N(\mu_k, \sigma[d]) if |x - \mu_k| < 2\sigma[d] d = 1, ..., D
-Alternative strategy: find the confidence interval of the multivariate normal distribution
-
-Generate the noise nodes:
-x_noise ~ Unif(min, max) #bound of the true clusters
-"""
-
-"""
-USim in the Undirected Unipartite (UU) Case
-Generate the covariates from the Gaussian mixture model with \sigma=4:
-x_i = \mu_k + \sigma*z_i, if i belongs to cluster k, z_i ~iid N(0, I_d)
-The cluster centers \mu_k, k=1,..r are chosen uniformly at random from the standard basis vector of R^d,
-that is, from the uniform distribution on {e_1, ..., e_d}
-"""
-
-"""
-[Zahra S. Razaee, 2017] Matched bipartite block model with covariates
-one-to-one matching: C_1k <-> C_2k, k=1,..,K; z_ri = k <=> i \in C_rk
-In order to model the correlation (i.e., a statistical link) between covariates of matched clusters,
-we draw the entire vector v_*k := (v_rk, r=1,2) = (v_1k, v_2k) from a multivariate normal distribution 
-with possibly nonzero matrix between the two components v_1k, v_2k
-\pi_r = (\pi_r1, ..., \pi_rK), r=1,2;
-z_ri ~ Mult(1, \pi_r)
-(v_rk, r=1,2) ~iid N(u, \Sigma), k = 1, ..., K;
-x_ri|(z_ri=k, v_rk) ~ N(v_rk, \sigma_r^2*I_{d_r})
-
-Given the latent community labels Z, X is independent of A
-
-we can control the balance of two sources of information by rescaling
-.\Sigma
-.Q = (p, q), in addition to the separation of p and q; the expected degree of the network
-
-.Data generation
-..Covariate generation v_*k, u=0, \Sigma = \nu*I_{d_1+d_2}; 
-...larger \nu causes v_*k to be further apart, hence covariates are more informative
-...\nu=0 corresponds to zero covariate information
-...fix covariate (measurement) noise levels at \sigma_r=0.5 for r=1,2
-
-..Network generation
-...expected average degree \lambda and out-in-ratio \alpha=q/p \in [0, 1)
-...estimation becomes harder when \lambda decreases (few edges) 
-...or when \alpha increases (communities are not well separated)
-...fix \alpha=1/7 and vary \lambda 
-...proportion of noise nodes
-
-.Methods comparison
-..Spectral clustering
-..Spectral clustering with kernel(L_sym/L_rw)
-..Hierarchical clustering on the co-membership matrix produced by subsampling the first 2 methods
-..BitKmeans: simulation_type = 'tsc'; simulation_type = 'tscu'
-...w/ kernel(L_sym/L_rw); w/o kernel; rank based; value based
-..BitSP(reconstruct the Laplacian matrix in each sub-sampling step;): simulation_type = 'sp_tsc'
-...w/ kernel(L_sym/L_rw); w/o kernel; rank based; value based
-..OrthClust!!!
-
-.Simulation
-..randindex of methods with varying \lambda (expected average degree)
-..randindex of methods with varying proportion of noise nodes
-..randindex of BitKmeans with different dimension of the covariates d=(d_1,d_2) with varying \lambda
-..randindex of BitKmeans with different scale of the covariance matrix \nu with varying \lambda
-
-.Robustness/Sensitivity
-..varying K
-..varying \alpha
-..varying \beta
-..varying proportion of noise nodes
-..varying \tao, is chosen to be the value which minimizes the k-means objective function, 
-..the within cluster of sum squares (eigevectors), \tao \in (0, 100)
-..\gamma k(x_i, x_j) = exp(-||x_i - x_j||^2 / \gamma) or k(x_i, x_j) = exp(-||x_i - x_j|| / \gamma);
-..as the kernel parameter \gamma increases, the structure of the kernel matrix tends to change from block diagonal to low-rank
-..when \gamma->0, then the kernel matrix goes to the identity matrix
-..\gamma=0.1, 1, 10, 100, 1000, 10000
-
-.Monte Carlo analyses, using subsampling and adding Erdos-Renyi noise
-..
-###need think
-the results are averaged over 50 Monte Carlo replications. 
-the results when we subsample the network to retain a fraction of the nodes on each side (from 95% down to 10%). 
-The x- axis shows the resulting overall average degree of the network at each subsampling level. 
-The results are averaged over 50 replications and the interquantile range(IQR) is also shown as a measure of variability
-..
-###need check
-added erdos-renyi noise of average degree from 0 to 10. 
-(the covariates mitigate the effect of noise and lead to a much gracefule degradation of performance for mbiSBM relative to biSC)
-
-Unified similarity clustering (USim)
-S_{\tao} = S_{\tao,\alpha} := (K_1 + \tao_1*I)^{\alpha_1} A (K_2 + \tao_2*I)^{\alpha_2}
-\alpha=1, \tao \in [0, \inf)
-.\frac{S_{\tao}}{\tao^{2*\alpha}} --> A as \tao --> \inf
-.S_{\tao} --> K^{\alpha} A K^{\alpha} as \tao --> 0
-the performance of S_{\tao} at the two extremes \tao = 0,\inf corresponds to clustering based on covariates alone 
-and based on network informatin alone. 
-combining the kernel with the adjacency matrix boosts the information, as the randindex is higher somewhere 
-between these two extreme cases. USim is more robust to the change of \tao compared to its additive counterpart 
-the sparser the network is, the more significant the added benefit of covariates becomes/
-the improvement is quite significant the sparser the network becomes
-"""
-
-
-# In[ ]:
-
-###be careful about the random.seed(), make sure each time the generation is different??? (covariates)"""
-###check the formula of the (expected) average degree
-
-#compare the way of generate true clusters through make_blob and the way of generating within 2 sd.
-
-#smallsigma can be fixed, not so importmant, need vary the largesigma
-
-#if self.noise_p is not None: should switch to self.noise_p > 0?
-
-#Question: for the labels of the noise nodes, assign them randomly into the true cluster??? is not correct
-
-#Is scipy.sparse.linalg.svds faster than scipy.sparse.linalg.eigsh
-
-#the noise nodes(scattered genes) has the largest cluster label
-
-#the sub-component of a fully connected component(through sub-sampling) may no longer be a fully connected one
-
-
-# In[1]:
-
-"""
-###execute the python file/module by:
-###yidan@compbio1:~/Dropbox/project_fly_worm$ python3 -m simulation.simdata.synthetic_data
-### main.py/main_eigen_plot.py file has same directory as package eigen_spectral
-### ValueError: attempted relative import beyond top-level package
-    
-how to solve this problem??? python relative import: import a package in parent-parent directory
-from ...eigen_spectral.eigen_decomposition import my_spectral_embedding
-    
-I think the problem is because we import synthetic_data in different python scripts (main_eigen_plot.py & main_simulation.py)
-whose directories are different with each other
-"""
-
 from scipy.stats import bernoulli
-
-#from .evaluation.rand_index import weighted_rand_score ###SystemError: Parent module '' not loaded, cannot perform relative import
-"""
-try:
-    from .mymodule import myclass
-except Exception: #ImportError
-    from mymodule import myclass
-"""
 
 try:
     from .evaluation.rand_index import weighted_rand_score
@@ -170,20 +7,9 @@ except Exception:
     from evaluation.rand_index import weighted_rand_score
     #ImportError
 
-"""
-if __name__ == "__main__":
-    from evaluation.rand_index import weighted_rand_score
-else:
-    # only suitable for the case where we run the main_simulation.py script in the same directory of simdata
-    from simdata.evaluation.rand_index import weighted_rand_score
-"""
-
 import pandas as pd
 import numpy as np
 import math
-#import random
-#from copy import deepcopy
-#import collections
 from sklearn.datasets import make_blobs
 
 #from sklearn.preprocessing import scale
@@ -200,9 +26,6 @@ from scipy.stats import rankdata
 from sklearn.metrics.pairwise import laplacian_kernel
 from sklearn.metrics.pairwise import pairwise_kernels
 
-#from numpy.linalg import inv
-#from scipy.linalg import sqrtm
-#from scipy.linalg import eigh
 from scipy.sparse.linalg import eigsh
 
 from scipy.sparse import csr_matrix
@@ -215,9 +38,6 @@ from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
 
 from sklearn.cluster import spectral_clustering
 from sklearn.manifold import spectral_embedding
-#from sklearn.metrics import mutual_info_score
-#from sklearn.metrics import normalized_mutual_info_score
-#from scipy.sparse import csgraph
 
 import multiprocessing as mp
 import os
@@ -554,39 +374,7 @@ class SimData:
     
 
     def add_rank_based(self, rank_d=5):
-        """
-        Mutli-layer network: edges within each single sides are allowed
-        Genes in one species will be connected if they are co-associated in a co-expression network 
-        (Jianhua Ruan, Angela K Dean, Weixiong Zhang. 2010) 1. rank-based; 2. value-based
-        
-        Pearson’s correlation requires that each dataset be normally distributed;
-        p-value of pearson correlation roughly indicates the probability of an uncorrelated system producing 
-        datasets that have a Pearson correlation at least as extreme as the one computed from these datasets. 
-        The p-values are not entirely reliable but are probably reasonable for datasets larger than 500 or so.
-        
-        rank_d: the smallest value such that all genes form a fully connected component.
-        
-        the adjacency matrix(self.W)/laplacian matrix(self.L) is symmetric <=> edges are undirected.
-        the equivalence of normalized Euclidean distance and Pearson Coefficient: dE(rnorm, snorm)**2 = 2*d*dP (rnorm, snorm)
-        """ 
-        print(".add_rank_based() get called")
-        """
-        index_x = np.array(list(combinations(np.arange(self.leftnodes), 2)))
-        index_y = np.array(list(combinations(np.arange(self.rightnodes), 2)))
-        """        
-        """
-        ###RuntimeWarning: invalid value encountered in double_scalars r = r_num / r_den. 
-        pearsonr_X = np.absolute(np.array([pearsonr(self.iX[i,], self.iX[j,])[0] for (i, j) in index_x]))
-        pearsonr_Y = np.absolute(np.array([pearsonr(self.iY[i,], self.iY[j,])[0] for (i, j) in index_y]))
-        """
-        """Find a faster way (e.g, a function;) to get the Pairwise distances between observations in n-dimensional space
-        pearsonr_X = np.absolute(np.array([1-(euclidean(self.iX[i,], self.iX[j,])**2)/(2*self.left_dim) for (i, j) in index_x]))
-        pearsonr_Y = np.absolute(np.array([1-(euclidean(self.iY[i,], self.iY[j,])**2)/(2*self.right_dim) for (i, j) in index_y]))
-        """
-        """
-        pearsonr_X = squareform(pearsonr_X, force='tomatrix') #the diagonal elements are zero. np.fill_diagonal(pearsonr_X, 1), no edge connect self
-        pearsonr_Y = squareform(pearsonr_Y, force='tomatrix')
-        """
+
         ###np.absolute(x, out=x)
         pearsonr_X = np.absolute(1 - (euclidean_distances(self.iX)**2)/(2*self.left_dim))
         pearsonr_Y = np.absolute(1 - (euclidean_distances(self.iY)**2)/(2*self.right_dim))
@@ -727,100 +515,12 @@ class SimData:
             return((left_data_mask, right_data_mask, N_components))
         else:
             print("The largest component only contain one side nodes")
-            
 
-    #def eigenmatrix_sym(self, K):
-        """l = ceil(log2K), K is # of true clusters [Inderjit S. Dhillon, 2001]"""
-        """Normalized spectral clustering [Ng, Jordan, and Weiss, 2002]"""
-        """L_sym is symmetric real square matrix, positive semi-definite"""
-        """select the first l eigenvectors of the Laplacian matrix"""
-        
-        """
-        print("start to calculate the symmetric laplacian matrix")
-        start_time = time.time()
-        
-        print("self.W is symmetric: %s" % ((self.W == self.W.T).all()))
-        print("the diagonals of self.W are zeros: %s" % (np.sum(np.diag(self.W))))
-        
-        self.D = np.diag(np.sum(self.W, axis=1))
-        #print((np.diag(self.D) == 0).any())
-        self.L_sym = np.identity(self.leftnodes + self.rightnodes, dtype=np.uint16) - (self.W.T * (1/np.sqrt(np.diag(self.D)))).T * (1/np.sqrt(np.diag(self.D)))
-        print(time.time() - start_time)
-        
-        #print((self.L_sym == self.L_sym.T).all()) #False in the kernel_based case #True in the rank_based case
-        if np.isreal(self.L_sym).all(): #this step can be removed
-            
-            if (self.L_sym == self.L_sym.T).all():
-                print("L_sym is symmetric") 
-            else:
-                print("L_sym is asymmetric") 
-                self.L_sym = (self.L_sym + self.L_sym.T)/2
-            
-            print("solve the eigen problem by eigsh")
-            start_time = time.time()
-            l = int(np.ceil(np.log2(K))) + 1
-            eigvalues, eigvectors = eigsh(A=self.L_sym, k=l, which='SM')
-            print(time.time() - start_time)
-            #print(eigvalues)
-            #print(eigvectors)
-            
-            self.U = normalize(eigvectors[:, np.arange(l)], norm="l2", axis=1, copy=True, return_norm=False)
-            
-        else:
-            print('The Laplacian matrix L_sym has complex elements!')
-        """
-    
     
     def eigenmatrix_sym(self, K):
-        """l = ceiling(log2K), K is # of true clusters [Inderjit S. Dhillon, 2001]"""
-        """Normalized spectral clustering according to Ng, Jordan, and Weiss (2002)"""
-        """L_sym is symmetric real matrix, positive semi-definite"""
-        """select the first K eigenvectors of the Laplacian matrix"""
-        ###inv(sqrtm(D)) <=> np.diag(np.reciprocal(np.sqrt(np.diag(D)))) #test the speed
-        
-        #D1 = np.diag(np.sum(self.A, axis=1))
-        #D2 = np.diag(np.sum(self.A, axis=0))
-        
-        #self.D = np.vstack((np.hstack((D1, np.zeros((self.leftnodes, self.rightnodes), dtype=np.uint16))),
-        #np.hstack((np.zeros((self.rightnodes, self.leftnodes), dtype=np.uint16), D2))))
-        """
-        print("start to run .spectral_embedding() to construct the laplacian matrix")
-        start_time = time.time()
-        
-        if (self.W == self.W.T).all():
-            #print("W is symmetric")
-            pass
-        else:
-            #print("W is asymmetric")
-            self.W = (self.W + self.W.T)/2
-        
-        self.U = spectral_embedding(adjacency=self.W, n_components=K, eigen_solver=None,
-                                    random_state=None, eigen_tol=0.0, norm_laplacian=True, drop_first=False)
-        
-        ###In this step, we do not normalize the eigenvectors of laplacian matrix
-        #self.U = normalize(self.U, norm="l2", axis=1, copy=True, return_norm=False)
-        print(time.time() - start_time)
-        """
-        print("start to calculate the symmetric laplacian matrix with broadcasting")
-        #start_time = time.time()
-        
-        #print("self.W is symmetric: %s" % ((self.W == self.W.T).all()))
-        #print("the diagonals of self.W are zeros: %s" % (np.sum(np.diag(self.W))))
-        
         self.D = np.diag(np.sum(self.W, axis=1))
-        #print((np.diag(self.D) == 0).any())
-        
-        ###sqrtm: MemoryError; block matrix multiplication
-        #self.L_sym = np.identity(self.leftnodes + self.rightnodes, dtype=np.uint16) - np.dot(np.dot(inv(sqrtm(self.D)), self.W), inv(sqrtm(self.D)))
-        
-        #1693.9929325580597s
-        ###from __future__ import division
-        #self.L_sym = np.identity(self.leftnodes + self.rightnodes, dtype=np.uint16) - np.dot(np.dot(np.diag(1/np.sqrt(np.diag(self.D))), self.W), np.diag(1/np.sqrt(np.diag(self.D))))
         self.L_sym = np.identity(self.leftnodes + self.rightnodes, dtype=np.uint16) - (self.W.T * (1/np.sqrt(np.diag(self.D)))).T * (1/np.sqrt(np.diag(self.D)))
-        ###extract the diagonal elements and then perform broadcasted elementwise multiplication.
-        #print(time.time() - start_time)
-        
-        #print((self.L_sym == self.L_sym.T).all()) # False #because of the inverse operation
+
         if np.isreal(self.L_sym).all():
             
             if (self.L_sym == self.L_sym.T).all():
@@ -830,34 +530,14 @@ class SimData:
                 self.L_sym = (self.L_sym + self.L_sym.T)/2
 
         print("solve the eigen problem by eigsh")
-        #start_time = time.time()
-        #l = int(np.ceil(np.log2(K))) + 1
-        #l = K
-        
         eigvalues, eigvectors = eigsh(A=self.L_sym, k=K, which='SM')
-        #print(time.time() - start_time)
-        #print(eigvalues)
-        #print(eigvectors)
-            
-        ### if self.L_sym is symmetric, then the eigenvalues and eigenvectors will be real
+
         self.U = normalize(eigvectors[:, np.arange(K)], norm="l2", axis=1, copy=True, return_norm=False)
-        
-        """
-        self.U = spectral_embedding(adjacency=self.W, n_components=K, eigen_solver=None,
-                                    random_state=None, eigen_tol=0.0, norm_laplacian=True, drop_first=False)
-        """
+
 
     def eigenmatrix_rw(self, K):
-        """l = ceiling(log2K), K is # of true clusters [Inderjit S. Dhillon, 2001]"""
-        """L_rw := inv(D)L_unn = I- inv(D)W, is real symmetric square matrix; 
-           positive semi-definite and have n non-negative real-valued eigenvalues"""
-        """select the first l eigenvectors of the Laplacian matrix"""
-        """Normalized spectral clustering [Shi and Malik, 2000]"""
         
         print("start to calculate the unnormalized laplacian matrix")
-        #print("self.W is symmetric: %s" % ((W == W.T).all()))
-        #print("the diagonals of self.W are zeros: %s" % (np.sum(np.diag(W))))
-
         self.D = np.diag(np.sum(self.W, axis=1))
         #print((np.diag(self.D) == 0).any())
         self.L_unn = self.D - self.W
@@ -867,19 +547,14 @@ class SimData:
         else:
             print("L_unn is asymmetric") #possible when adopt value_based
             self.L_unn = (self.L_unn + self.L_unn.T)/2
-        
-        ###Generalized eigenvalue problem
+
         print("solve the generalized eigen problem by eigsh")
         start_time = time.time()
         l = int(np.ceil(np.log2(K))) + 1
         eigvalues, eigvectors = eigsh(A=self.L_unn, k=l, M=self.D, which='SM')
         print(time.time() - start_time)
-        #print(eigvalues)
-        #print(eigvectors)
         
         if np.isreal(eigvalues).all() & np.isreal(eigvectors).all():
-            """normalized each row of the eigenvectors [Zahra]"""
-            #self.U = eigvectors[:, np.arange(K)]
             self.U = normalize(eigvectors[:, np.arange(l)], norm="l2", axis=1, copy=True, return_norm=False)
         else:
             print("The generalized eigenvalue problem (L_rw) has complex eigenvalues/eigenvectors!")
@@ -887,31 +562,6 @@ class SimData:
     
     @staticmethod
     def sub_eigenmatrix_sym(K, W):
-        #print("start to run .spectral_embedding() to construct the laplacian matrix")
-        #start_time = time.time()
-        """
-        if (W == W.T).all():
-            #print("W is symmetric")
-            pass
-        else:
-            #print("W is asymmetric")
-            W = (W + W.T)/2
-        
-        U = spectral_embedding(adjacency=W, n_components=K, eigen_solver=None, random_state=None,
-                                    eigen_tol=0.0, norm_laplacian=True, drop_first=False)
-        
-        ###In this step, we do not normalize the eigenvectors of laplacian matrix
-        #U = normalize(self.U, norm="l2", axis=1, copy=True, return_norm=False)
-        return(U)
-        
-        #print(time.time()- start_time)
-        """
-        
-        #print("start to calculate the symmetric laplacian matrix")
-        #start_time = time.time()
-        
-        #print("self.W is symmetric: %s" % ((W == W.T).all()))
-        #print("the diagonals of self.W are zeros: %s" % (np.sum(np.diag(W))))
     
         D = np.diag(np.sum(W, axis=1))
         #print("possiblity of sub sampling has nodes with no edge connected: ", (np.diag(D) == 0).any())  #self.simulation_type = 'sp_tsc'
@@ -946,15 +596,7 @@ class SimData:
 
     @staticmethod
     def sub_eigenmatrix_rw(K, W):
-        """l = ceiling(log2K), K is # of true clusters [Inderjit S. Dhillon, 2001]"""
-        """L_rw := inv(D)L_unn = I- inv(D)W, is real symmetric square matrix; 
-           positive semi-definite and have n non-negative real-valued eigenvalues"""
-        """select the first l eigenvectors of the Laplacian matrix"""
-        """Normalized spectral clustering [Shi and Malik, 2000]"""
-        
-        #print("start to calculate the unnormalized laplacian matrix")
-        #print("self.W is symmetric: %s" % ((W == W.T).all()))
-        #print("the diagonals of self.W are zeros: %s" % (np.sum(np.diag(W))))
+
         print("possiblity of sub sampling has nodes with no edge connected: ", (np.diag(D) == 0).any())  #self.simulation_type = 'sp_tsc'
         print("total sum of zero diagnonal elements: ", sum(np.diag(D) == 0))
         
@@ -974,10 +616,7 @@ class SimData:
         #start_time = time.time()
         l = int(np.ceil(np.log2(K))) + 1
         eigvalues, eigvectors = eigsh(A=L_unn, k=l, M=D, which='SM')
-        
-        #print(time.time() - start_time)
-        #print(eigvalues)
-        #print(eigvectors)
+
         
         if np.isreal(eigvalues).all() & np.isreal(eigvectors).all():
             """normalized each row of the eigenvectors [Zahra]"""
@@ -1007,22 +646,7 @@ class SimData:
     
 
     def fit_bitkmeans(self, target, k_min, alpha, beta, seq_num, iteration, resamp_num, remain_p, k_stop):
-        """
-        Algorithm 2: Sequential identification of tight and stable clusters
 
-        target The total number of clusters that the user aims to find
-        k_min The starting point of k0
-        top_can The number of top (size) candidate clusters for a specific k0
-        seq_num The number of subsequent k0 that finds the tight cluster
-        resamp_num Total number of resampling to obtain comembership matrix
-        remain_p Stop searching when the percentage of remaining points <= remain_p
-        k_stop Stop decreasing k0 when k0 <= k_stop
-
-        Choose the largest candidate from the tight cluster candidates (>=beta), 
-        so that no need to specify q(top_can)
-        """
-        """Open question: how to specify/identify the number of clusters: K; Try multiple values"""
-        
         #random.seed(0)
         print(".fit_bitkmeans() method get called")
         #self.simulation_type = "tsc"
@@ -1037,8 +661,6 @@ class SimData:
         
         print("CPU_count: %s" % (mp.cpu_count()))
         print("Main process","PID: %s, Process Name: %s" % (os.getpid(), mp.current_process().name), "start working")
-        #print("Total number of points on the left side: " + str(self.leftnodes))
-        #print("Total number of points on the right side: " + str(self.rightnodes))
 
         nfound = 0
         found = True 
@@ -1073,9 +695,6 @@ class SimData:
                 if k0 > k_stop:
                     k0 = k0 - 1
 
-                #found_temp = candidates[seq_num-1][index_m[np.argmax(beta_temp>=beta), seq_num-1]]   
-                #found_temp = candidates[seq_num-1][index_m[np.nonzero(beta_temp>=beta)[0][0], seq_num-1]]
-                #found_temp_index = np.concatenate((INIT.leftindexs, INIT.rightindexs), axis=0)[found_temp]
                 found_temp = candidates[seq_num-1][np.amin(index_m[beta_temp>=beta, seq_num-1])]
                 found_temp = list(map(int, found_temp))
                 #tclust.append(found_temp)
@@ -1085,18 +704,12 @@ class SimData:
 
                     if index_i in self.leftindexs:
                         self.leftindexs = self.leftindexs[self.leftindexs != index_i]
-                        #found_id = self.left_id[index_i]  
                     else:
                         self.rightindexs = self.rightindexs[self.rightindexs != (index_i - self.leftnodes)]
-                        #found_id = self.right_id[(index_i - self.leftnodes)]
-
-                    #sub_tclust_id.append(found_id)
 
                 tclust.append(found_temp)
-                #tclust_id.append(sub_tclust_id)
+
                 print("Cluster size: "+ str(len(found_temp)))
-                #print('Cluster index: ', found_temp)
-                #print('Cluster id: ', sub_tclust_id) 
 
                 self.update_sample()
 
@@ -1109,35 +722,14 @@ class SimData:
                 print("Not found!")
                 print("k = " + str(k))
 
-        #end while  
-
-        #left_id = (self.left_id).tolist()
-        #right_id = (self.right_id).tolist()
-        
-        #len(tclust) == nfound
-        #predicted clustering vector: clust_id, where the largest value indicates the unclustered/scattered (noise) nodes
-
         clust_id = np.ones(self.leftnodes + self.rightnodes, dtype=np.uint16)*nfound
         for i, tclust_sub in enumerate(tclust, start=0):
             clust_id[tclust_sub] = i
 
-        """
-        for it in np.arange(len(tclust)):
-            for jt in tclust[it]:
-                clust_id[jt] = it
-        """
-        #comembership_matrix is for visualization, to show the distribution of predicted clusters
         comembership_matrix = (clust_id[:self.leftnodes][:, np.newaxis] == clust_id[self.leftnodes:][np.newaxis, :]).astype(np.uint16)
         comembership_matrix[clust_id[:self.leftnodes] == nfound] = 0
         comembership_matrix = comembership_matrix.tolist()
-        
-        """
-        comembership_matrix = np.zeros((self.leftnodes, self.rightnodes))
-        for li in np.arange(self.leftnodes):
-            for rj in np.arange(INIT.rightnodes):
-                if (clust_id[li] == clust_id[rj+self.leftnodes]) and (clust_id[li] < nfound):
-                    comembership_matrix[li, rj] = 1
-        """
+
         true_label = dict(indexs=np.concatenate((self.tllabel, self.trlabel), axis=0), noise=(self.noise_ratio>0))
         clust_id = dict(indexs=clust_id, noise=(clust_id==nfound).any())
 
@@ -1145,52 +737,11 @@ class SimData:
 
         output = dict(comembership_matrix=comembership_matrix, rand_index=rand_index)
         
-        #print('output: ' + str(output))
-        #with open(root + 'results.json', 'w') as f:
-            #json.dump(output, f)
-            
         return(output)
-        #return(rand_index)
 
     
     def find_candidates(self, k, alpha, iteration=3, resamp_num=20):
-        
-        """Algorithm 1: select the candidates of tight clusters
-                        In each iteration, lauch resamp_num sub processes for resampling
-        """
-        """
-        D_bars = []
-        for i in np.arange(resamp_num):
-            D = simulation(Init, k)
-            D_bars.append(D)
 
-        D_bar = sum(D_bars)/resamp_num
-        """
-
-        """
-        #if __name__=="__main__":
-            #os.cpu_count()
-            #with multiprocessing.Pool(PROCESSES) as pool:
-
-        #print("CPU_count: %s" % (multiprocessing.cpu_count()))
-        pool = mp.Pool(processes = multiprocessing.cpu_count())
-        #pool = Pool(processes = 1)
-        D_bars_p = []
-        D_bars = []
-
-        for _ in range(resamp_num):
-            D_bars_p.append(pool.apply_async(simulation, args=(Init, k)))   
-
-        pool.close()
-        pool.join()
-
-        for D in D_bars_p:
-            D_bars.append(D.get())
-
-        D_bar = sum(D_bars)/resamp_num
-        """
-        
-        #D_bar = []
         D_bar = 0
               
         for itr in range(iteration):
@@ -1215,20 +766,7 @@ class SimData:
             # Run processes
             for p in processes:
                 p.start()
-            
-            """
-            # Get process results from the output queue
-            #print("Start getting comembership matrixs from the Queue")
-            #D_bar_sub = [output.get() for p in processes] 
-            D_bar_sub = 0 #broadcasting
-            for p in processes:
-                D_bar_sub += output.get()
-            #print("End getting comembership matrixs from the Queue")
-            """
-            
-            # Get process results from the output queue
-            #print("Start getting comembership matrixs from the Queue")
-            #D_bar_sub = [output.get() for p in processes]
+
             D_bar_sub = 0 #broadcasting
             for p in processes:
                 #D_bar_sub += output.get()
@@ -1238,11 +776,7 @@ class SimData:
             
             del co_labels
             gc.collect()
-            #print("length of D_bar_sub: " + str(len(D_bar_sub)))
-            #print((D_bar_sub[0] == D_bar_sub[i]).all())  
 
-            # Exit the completed processes
-            #print("Start joining the sub-processes")
             for p in processes:  
                 p.join()
             #print("End joining the sub-processes")
@@ -1250,30 +784,17 @@ class SimData:
             del output
             gc.collect()
             
-            #D_bar_1 = sum(D_bar_sub)/resamp_num
-            #D_bar_sub = np.sum(D_bar_sub, axis=0, dtype=np.uint16)/resamp_num
-            #D_bar_sub = np.sum(D_bar_sub, axis=0)/resamp_num #this step cause MemoryError
-            #D_bar_sub = sum(D_bar_sub)/resamp_num  ###calculate the co-membership matrix after finishing each iteration to save the memory
-            #D_bar_sub = D_bar_sub/resamp_num
-            
-            #D_bar.append(D_bar_sub)
-            #D_bar += D_bar_sub
-            
             D_bar += (D_bar_sub/resamp_num)
             
             del D_bar_sub
             gc.collect()
 
             print("End iteration: ", itr+1)
-        
-        #D_bar = np.sum(D_bar, axis=0)/iteration 
-        #D_bar = sum(D_bar)/iteration  ### Membership matrix
+
         D_bar = D_bar/iteration
-        
-        #D_membership = deepcopy(D_bar) 
+
         D_bar_index = np.concatenate((self.leftindexs, self.rightindexs+self.leftnodes), axis=0)
-        #D_com_index = np.concatenate((self.leftindexs, self.rightindexs+self.leftnodes), axis=0)
-        #D_com = D_bar[D_com_index][:, D_com_index] #copy from the original 2d array  
+ 
         compressed_distance = squareform((1-D_bar), force='tovector', checks=False)
         Z = linkage(compressed_distance, method='complete')
         max_d = 1-alpha
@@ -1282,13 +803,7 @@ class SimData:
 
         res = []
         for hclusters_k_index in range(1, hclusters_nb+1): 
-            #candidate_index = np.nonzero(hclusters == hclusters_k_index)[0]
-            #candidate = D_membership_index[candidate_index]
             candidate = D_bar_index[hclusters == hclusters_k_index] #Boolean indexing
-            """do we restrict the co-clusters or clusters only containing single side nodes for the rank_based method"""
-            #if (self.rank_based | self.value_based): #allow the single side nodes???
-                #res.append(candidate)
-            #else: 
             if (candidate <= np.amax(self.leftindexs)).any() and (candidate >= self.leftnodes).any(): #len>=2
                 res.append(candidate)
             #if (len(np.intersect1d(candidate, Init.leftindexs))>0) and (len(np.intersect1d(candidate, Init.rightindexs+Init.leftnodes))>0):
@@ -1303,11 +818,7 @@ class SimData:
 
 
     def get_consensus_matrix(self, k, iteration=3, resamp_num=20):
-    
-        """basically, it is same as self.find_candidates(), but it only return the consensus matrix M_bar
-        """
-            
-        #D_bar = []
+
         D_bar = 0
                 
         for itr in range(iteration):
@@ -1333,19 +844,6 @@ class SimData:
             for p in processes:
                 p.start()
 
-            """
-            # Get process results from the output queue
-            print("Start getting comembership matrixs from the Queue")
-            #D_bar_sub = [output.get() for p in processes]
-            D_bar_sub = 0 #broadcasting
-            for p in processes:
-                D_bar_sub += output.get()
-            print("End getting comembership matrixs from the Queue")
-            """
-
-            # Get process results from the output queue
-            #print("Start getting comembership matrixs from the Queue")
-            #D_bar_sub = [output.get() for p in processes]
             D_bar_sub = 0 #broadcasting
             for p in processes:
                 #D_bar_sub += output.get()
@@ -1355,26 +853,13 @@ class SimData:
             
             del co_labels
             gc.collect()
-            #print("length of D_bar_sub: " + str(len(D_bar_sub)))
-            #print((D_bar_sub[0] == D_bar_sub[i]).all())
-            
-            # Exit the completed processes
-            #print("Start joining the sub-processes")
+
             for p in processes:
                 p.join()
             #print("End joining the sub-processes")
         
             del output
             gc.collect()
-
-            #D_bar_1 = sum(D_bar_sub)/resamp_num
-            #D_bar_sub = np.sum(D_bar_sub, axis=0, dtype=np.uint16)/resamp_num
-            #D_bar_sub = np.sum(D_bar_sub, axis=0)/resamp_num #this step cause MemoryError
-            #D_bar_sub = sum(D_bar_sub)/resamp_num  ###calculate the co-membership matrix after finishing each iteration to save the memory
-            #D_bar_sub = D_bar_sub/resamp_num
-
-            #D_bar.append(D_bar_sub)
-            #D_bar += D_bar_sub
 
             D_bar += (D_bar_sub/resamp_num)
     
@@ -1383,33 +868,15 @@ class SimData:
             
             print("End iteration: ", itr+1)
 
-        #D_bar = np.sum(D_bar, axis=0)/iteration
-        #D_bar = sum(D_bar)/iteration  ### Membership matrix
         D_bar = D_bar/iteration
     
         return D_bar
 
 
     def simulation_tsc(self, random_seed, clusters_nb, output):
-        """TSC + Euclidean distance"""
-        """
-        Associate each example with closest centroid: assign every node to the cluster centroid
-        it is most closest to (smallest distance or largest similarity) 
         
-        Assign all of nodes into the K centroids???
-        
-        After normalize/standardize the covariates data, use the Euclidean distance (or Monotonic ensemble)/pearson correlation
-        """
-        
-        ###random.seed() ###Fail when use multiprocessing
-        #np.random.seed()
-        #np.random.seed(seed=int(time.time())) ###no sense, since the processes are almost lauched at the same time
-        
-        #print("Sub process","PID: %s, Process Name: %s, Random seed: %s" % (os.getpid(), mp.current_process().name, random_seed), "start working")
-        #np.random.seed(seed=mp.current_process().name) ###wrong datatype
         np.random.seed(seed=random_seed)
 
-        ###random.sample(population, k)
         lindexs_i = np.sort(np.random.choice(np.arange(len(self.leftindexs)), self.m, replace=False)) ###we could just use len(Init.selfindexs)
         rindexs_i = np.sort(np.random.choice(np.arange(len(self.rightindexs)), self.n, replace=False))
 
@@ -1428,19 +895,10 @@ class SimData:
         X1 = self.iX[lindexs]
         Y1 = self.iY[rindexs]
 
-        #print("Sub process","PID: %s, Process Name: %s, randomly choose left points: %s and right points: %s" % (os.getpid(), mp.current_process().name, sum(lmask), sum(rmask)))
-        ###clusters_nb < sub_U.shape[0] !
-
         kmeans = KMeans(n_clusters=clusters_nb, init='k-means++', n_init=10, max_iter=300, tol=0.0001,
                         precompute_distances='auto', verbose=0, random_state=None, copy_x=True, n_jobs=1,
                         algorithm='auto').fit(sub_U)
         labels = kmeans.labels_ #numpy.array dtype=int32  
-        """
-        If we use rank-based/rank-based method to connect the edges within species, then is it possible that 
-        the difficulty to find the co-cluster is because we produce lots of clusters of single species 
-        in the spectral clustering step(testify in the simulation study)????
-        """
-        #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "finish the KMeans")
 
         left_labels = labels[ : self.m]  #llabels = labels[np.arange(Init.m)]   
         right_labels = labels[self.m : ] #rlabels = labels[Init.m : (Init.m + Init.n)]
@@ -1452,7 +910,6 @@ class SimData:
 
         X_centroid = []
         for i in np.arange(clusters_nb, dtype=np.uint16): 
-            """It is possible that some clusters only contain single side genes after spectral clustering/Kmeans???"""
             if sum(left_labels == i) > 0:  #(left_labels == i).any()
                 x_centroid = np.sum(X1[left_labels == i], axis=0) / sum(left_labels == i)  #sum along the column
                 X_centroid.append((i, x_centroid))
@@ -1470,38 +927,6 @@ class SimData:
         Y_centroid_names, Y_centroid_m = zip(*Y_centroid)
         #Y_centroid_names = np.array(Y_centroid_names)
         Y_centroid_m = np.array(Y_centroid_m)   #.shape = (variables, observations)
-
-        #spearmanr() applied on two matrices will be time consuming, since it will calculate the correlation inside the single object 
-        #However, I found creating the following Spearman Correlation matrix is much more slower than the first way!
-
-        #index_xcentroid = list(product(np.arange(sum(~lmask)), np.arange(len(X_centroid)))) #or len(X_centroid_m)
-        #index_ycentroid = list(product(np.arange(sum(~rmask)), np.arange(len(Y_centroid))))
-
-        #list comprehension: for i, j ; for (i, j)  #check the direction of array for the reshape
-        #spearmanr_X = np.array([spearmanr(Init.X[~lmask][i], X_centroid_m[j])[0] for (i, j) in index_xcentroid]).reshape(sum(~lmask), -1)
-        #spearmanr_Y = np.array([spearmanr(Init.Y[~rmask][i], Y_centroid_m[j])[0] for (i, j) in index_ycentroid]).reshape(sum(~rmask), -1)
-
-        """
-        spearmanr_X = spearmanr(Init.X[~lmask].T, X_centroid_m.T)[0][:sum(~lmask), sum(~lmask):]
-        spearmanr_Y = spearmanr(Init.Y[~rmask].T, Y_centroid_m.T)[0][:sum(~rmask), sum(~rmask):]
-
-        ###consider the absolute correlations
-        spearmanr_X = np.absolute(spearmanr_X)
-        spearmanr_Y = np.absolute(spearmanr_Y)
-
-        #find the maximum index along the columns for each row
-        X_labels[~lmask] = np.array([X_centroid_names[i] for i in np.argmax(spearmanr_X, axis=1)])
-        Y_labels[~rmask] = np.array([Y_centroid_names[i] for i in np.argmax(spearmanr_Y, axis=1)])
-        """ 
-        """
-        index_xcentroid = list(product(np.arange(sum(~lmask)), np.arange(len(X_centroid)))) #or len(X_centroid_m)
-        index_ycentroid = list(product(np.arange(sum(~rmask)), np.arange(len(Y_centroid))))
-
-        #list comprehension: for i, j ; for (i, j)  #check the direction of array for the reshape
-        ###Euclidean distance / pearson correlation
-        euclidean_X = np.array([euclidean(self.X[~lmask][i], X_centroid_m[j]) for (i, j) in index_xcentroid]).reshape(sum(~lmask), -1)
-        euclidean_Y = np.array([euclidean(self.Y[~rmask][i], Y_centroid_m[j]) for (i, j) in index_ycentroid]).reshape(sum(~rmask), -1)
-        """
         
         euclidean_X = euclidean_distances(self.X[~lmask], X_centroid_m)
         euclidean_Y = euclidean_distances(self.Y[~rmask], Y_centroid_m)
@@ -1511,16 +936,6 @@ class SimData:
         Y_labels[~rmask] = np.array([Y_centroid_names[i] for i in np.argmin(euclidean_Y, axis=1)]) #type(Y_centroid_names[0]): numpy.uint16
 
         co_labels = np.concatenate((X_labels, Y_labels), axis=0)  #len = self.leftindexs + self.rightindexs
-
-        #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "start calculating the comembership matrix")
-        ###MemoryError. datatype(int) itemsize, test on server using python script. break the co_labels into several vectors
-        ###and combine those blocks together; broadcasting/vectorization
-        ###PARALLELIZATION(in a single process)
-        ###output.put()
-        ###print(co_labels)
-        ###print(co_labels.dtype) to check 
-        #comembership_matrix = np.equal.outer(co_labels, co_labels)*1
-        #output.put(comembership_matrix)
         
         #output.put((co_labels[:, np.newaxis] == co_labels[np.newaxis, :]).astype(np.uint16))
         output.put(co_labels)
@@ -1532,23 +947,9 @@ class SimData:
 
 
     def simulation_tscu(self, random_seed, clusters_nb, output):
-        """TSCU"""
-        """
-        Assign the remaining nodes into K centoids by using the original eigenvector_matrix instead of covariates
-        Given a pre-specified positive integer K, apply the K-Means clustering algorithm to sub_U
-        slice sub_U --> kmeans
-        """
 
-        ###random.seed() ###Fail when use multiprocessing
-        #np.random.seed()
-        #np.random.seed(seed=int(time.time())) ###no sense, since the processes are almost lauched at the same time
-        #print("Sub process","PID: %s, Process Name: %s, Random seed: %s" % (os.getpid(), mp.current_process().name, random_seed), "start working")
-        #np.random.seed(seed=mp.current_process().name) ###wrong datatype
         np.random.seed(seed=random_seed)
 
-        ###random.sample(population, k)
-        
-        ###sys.getsizeof()
         lindexs_i = np.sort(np.random.choice(np.arange(len(self.leftindexs)), self.m, replace=False)) ###or we could just use len(Init.leftindexs)
         rindexs_i = np.sort(np.random.choice(np.arange(len(self.rightindexs)), self.n, replace=False))
 
@@ -1564,23 +965,16 @@ class SimData:
         u_indexs = np.concatenate((lindexs, rindexs+self.leftnodes), axis=0) 
         sub_U = self.U[u_indexs]  #a copy of the orginal array
 
-        #print("Sub process","PID: %s, Process Name: %s, randomly choose left points: %s and right points: %s" % (os.getpid(), mp.current_process().name, sum(lmask), sum(rmask)))
-        ###clusters_nb < sub_U.shape[0] !!!
         kmeans = KMeans(n_clusters=clusters_nb, init='k-means++', n_init=10, max_iter=300, tol=0.0001, 
                         precompute_distances='auto', verbose=0, random_state=None, copy_x=True, n_jobs=1, 
                         algorithm='auto').fit(sub_U)
         labels = kmeans.labels_
-
-        ###When I use multiprocessing, one process got stuck at K-Means step and cannot finish it. Try my own KMeans function
-        ###K-Means function would be faster???
-        #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "finish the KMeans")
 
         U_remain = np.concatenate((self.U[self.leftindexs][~lmask], 
                                    self.U[(self.leftnodes + self.rightindexs)][~rmask]), axis=0)
 
         labels_remain = kmeans.predict(U_remain)
 
-        ###Only assign the remaining nodes to the k centroids with eigenvector matrix
         left_labels = labels[ : self.m]  #llabels = labels[np.arange(Init.m)]   
         right_labels = labels[self.m : ] #rlabels = labels[Init.m : (Init.m + Init.n)]
 
@@ -1593,13 +987,7 @@ class SimData:
         Y_labels[~rmask] = labels_remain[sum(~lmask) : ]
 
         co_labels = np.concatenate((X_labels, Y_labels), axis=0)  #len = self.leftindexs + self.rightindexs
-        #print(co_labels)
-        #print(co_labels.dtype)
-        #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "start calculating the comembership matrix")
-        #comembership_matrix = np.equal.outer(co_labels, co_labels)*1
-        #output.put(comembership_matrix)
-        
-        #output.put((co_labels[:, np.newaxis] == co_labels[np.newaxis, :]).astype(np.uint16))
+
         output.put(co_labels)
         #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "get the co_labels vector.")
         
@@ -1609,27 +997,7 @@ class SimData:
     
      
     def simulation_sp_tsc(self, random_seed, clusters_nb, output):
-        """
-        slice the adjacency matrix A (kernel matrix/rank_based correlation matrix/value_based correlation matrix) 
-        --> unified similarity matrix S_{\tau,\alpha} --> reconstruct the laplacian matrix 
-        --> eigen-decomposition --> eigenmatrix --> kmeans
-        """
-        
-        """
-            #sub_W = self.W[u_indexs][:, u_indexs]
-            ###after sub-sampling, some node may has no edge connected anymore.
-            ###therefore, instead of slice self.W, we need to reconstruct the adjacency matrix (with kernel)
-            /home/yidan/Dropbox/project_fly_worm/simulation/simdata/synthetic_data.py:682: RuntimeWarning: divide by zero encountered in true_divide
-            L_sym = np.identity(W.shape[0], dtype=np.uint16) - (W.T * (1/np.sqrt(np.diag(D)))).T * (1/np.sqrt(np.diag(D)))
-            /home/yidan/Dropbox/project_fly_worm/simulation/simdata/synthetic_data.py:682: RuntimeWarning: invalid value encountered in multiply
-            L_sym = np.identity(W.shape[0], dtype=np.uint16) - (W.T * (1/np.sqrt(np.diag(D)))).T * (1/np.sqrt(np.diag(D)))
-        """
-        ###random.seed() ###Fail when use multiprocessing
-        #np.random.seed()
-        #np.random.seed(seed=int(time.time())) ###no sense, since the processes are almost lauched at the same time
-        
-        #print("Sub process","PID: %s, Process Name: %s, Random seed: %s" % (os.getpid(), mp.current_process().name, random_seed), "start working")
-        #np.random.seed(seed=mp.current_process().name) ###wrong datatype
+
         print(".simulation_sp_tsc() get called")
         np.random.seed(seed=random_seed)
 
@@ -1652,8 +1020,7 @@ class SimData:
         sub_A = self.A[lindexs][:, rindexs]
         X1 = self.iX[lindexs]
         Y1 = self.iY[rindexs]
-        
-        ###need consider the other add edge method: value_based, rank_based
+
         if self.kernel == True:
             sub_W = self.sub_add_kernel(X1, Y1, sub_A, kernel_type='rbf')
             left_mask, right_mask, num_comp = self.sub_keep_largest_component(sub_W, left_length=self.m)
@@ -1681,26 +1048,11 @@ class SimData:
             self.sub_find_connected_components(sub_W)
         
         sub_U = self.sub_eigenmatrix_sym(clusters_nb, sub_W)
-        #sub_U = self.sub_eigenmatrix_sym(clusters_nb+1, sub_W) #l = log2(clusters_nb) + 1.
-        #sub_U = self.sub_eigenmatrix_rw(clusters_nb+1, sub_W)
-        
-        #print("Sub process","PID: %s, Process Name: %s, randomly choose left points: %s and right points: %s" % (os.getpid(), mp.current_process().name, sum(lmask), sum(rmask)))
-        ###clusters_nb < sub_U.shape[0] !
 
         kmeans = KMeans(n_clusters=clusters_nb, init='k-means++', n_init=10, max_iter=300, tol=0.0001,
                         precompute_distances='auto', verbose=0, random_state=None, copy_x=True, n_jobs=1,
                         algorithm='auto').fit(sub_U)
         labels = kmeans.labels_ #numpy.array dtype=int32
-        
-        """
-        labels = spectral_clustering(affinity=sub_W, n_clusters=clusters_nb, n_components=clusters_nb, eigen_solver=None,
-                                     random_state=None, n_init=10, eigen_tol=0.0, assign_labels='kmeans')
-        """
-        #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "finish the KMeans")
-        """
-        left_labels = labels[ : self.m]  #llabels = labels[np.arange(Init.m)]   
-        right_labels = labels[self.m : ] #rlabels = labels[Init.m : (Init.m + Init.n)]
-        """
         
         left_labels = labels[ : sum(lmask)]
         right_labels = labels[sum(lmask) : ]
@@ -1733,10 +1085,6 @@ class SimData:
 
         euclidean_X = euclidean_distances(self.X[~lmask], X_centroid_m)
         euclidean_Y = euclidean_distances(self.Y[~rmask], Y_centroid_m)
-        
-        ###Check the method which assign all of nodes into K centroids???
-        #euclidean_X = euclidean_distances(self.X, X_centroid_m)
-        #euclidean_Y = euclidean_distances(self.Y, Y_centroid_m)
         
         #find the minimum index along the columns for each row
         X_labels[~lmask] = np.array([X_centroid_names[i] for i in np.argmin(euclidean_X, axis=1)]) #type(X_centroid_names[0]): numpy.uint16
@@ -1777,42 +1125,11 @@ class SimData:
 
         beta = np.array(beta)   
         return(beta, index_m)
-        
-    """
-    def fit_spectral_clustering_nokernel(self, clusters_nb):
-        ###we can add the heatmap of the resulting comembership matrix to check???
-        print("spectral clustering with orignal bi-adjacency matrix get called")
-        W = np.concatenate((np.concatenate((np.zeros((self.leftnodes, self.leftnodes), dtype=np.uint16), self.A), axis=1),
-                            np.concatenate((self.A.T, np.zeros((self.rightnodes, self.rightnodes), dtype=np.uint16)), axis=1)), axis=0)
-            print("W.shape: ", W.shape)
-            
-            U = self.sub_eigenmatrix_sym(K=clusters_nb, W)
-            #self.sub_eigenmatrix_rw(K=clusters_nb, W)
-            
-            kmeans = KMeans(n_clusters=clusters_nb, init='k-means++', n_init=10, max_iter=300, tol=0.0001,
-                            precompute_distances='auto', verbose=0, random_state=None, copy_x=True, n_jobs=1,
-                            algorithm='auto').fit(U)
-            labels = kmeans.labels_ #numpy.array dtype=int32
-            
-            true_label = dict(indexs=np.concatenate((self.tllabel, self.trlabel), axis=0), noise=(self.noise_ratio>0))
-            pred_label = dict(indexs=labels, noise=False)
-            rand_index = weighted_rand_score(true_label, pred_label)
-            
-            return(rand_index)
-    """
 
     
     def fit_spectral_clustering(self, clusters_nb):
-        ###we can add the heatmap of the resulting comembership matrix to check???
         print("spectral clustering with the (same kernel embedded) inherited bi-adjacency matrix get called")
         #print("self.W.shape: ", self.W.shape)
-        """
-        print(self.simulation_type)
-        if self.simulation_type == "tsc":
-            self.eigenmatrix_sym(K = 30) #l = K
-        if self.simulation_type == "tscu":
-            self.eigenmatrix_sym(K = 30) #l = K
-        """
         
         self.eigenmatrix_sym(K = clusters_nb)
         print("k = ", clusters_nb)
@@ -1825,20 +1142,11 @@ class SimData:
         true_label = dict(indexs=np.concatenate((self.tllabel, self.trlabel), axis=0), noise=(self.noise_ratio>0))
         pred_label = dict(indexs=labels, noise=False)
         rand_index = weighted_rand_score(true_label, pred_label)
-
-        """
-        #comembership_matrix is for visualization, to show the distribution of predicted clusters
-        comembership_matrix = (labels[:self.leftnodes][:, np.newaxis] == labels[self.leftnodes:][np.newaxis, :]).astype(np.uint16)
-        comembership_matrix = comembership_matrix.tolist()
-        """
         output = dict(rand_index=rand_index)
         return(output)
 
  
     def fit_hierarchical_clustering(self, k, alpha, iteration, resamp_num, simulation_type):
-        ###we can add the heatmap of the comembership matrix to check???
-        #self.simulation_type = "tsc"
-        #self.simulation_type = "sp_tsc"
         
         print("hierarchical clustering with the (same kernel embedded) inherited bi-adjacency matrix get called")
         self.simulation_type = simulation_type
@@ -1848,24 +1156,14 @@ class SimData:
             self.eigenmatrix_sym(K = k) #l = K
         if self.simulation_type == "tscu":
             self.eigenmatrix_sym(K = k) #l = K
-        
-        #random.seed(0)
-        #np.random.seed(seed=int(time.time()))
-        #print("CPU_count: %s" % (mp.cpu_count()))
-        #print("Main process","PID: %s, Process Name: %s" % (os.getpid(), mp.current_process().name), "start working")
-        
+
         print("k = ", k)
         result = self.find_candidates(k, alpha, iteration, resamp_num) #list of arrays (tight clusters candidate)
         
         result_id = np.ones(self.leftnodes + self.rightnodes, dtype=np.uint16)*len(result) 
         for i, result_sub in enumerate(result, start=0):
             result_id[result_sub] = i
-        """
-        #comembership_matrix is for visualization, to show the distribution of predicted clusters
-        comembership_matrix = (result_id[:self.leftnodes][:, np.newaxis] == result_id[self.leftnodes:][np.newaxis, :]).astype(np.uint16)
-        comembership_matrix[result_id[:self.leftnodes] == len(result)] = 0
-        comembership_matrix = comembership_matrix.tolist()
-        """
+
         pred_label = dict(indexs=result_id, noise=(result_id==len(result)).any())
         true_label = dict(indexs=np.concatenate((self.tllabel, self.trlabel), axis=0), noise=(self.noise_ratio>0))
         rand_index = weighted_rand_score(true_label, pred_label)
@@ -1875,9 +1173,6 @@ class SimData:
 
 
     def fit_consensus_clustering(self, k, iteration, resamp_num, simulation_type):
-        ###we can add the heatmap of the comembership matrix to check???
-        #self.simulation_type = "tsc"
-        #self.simulation_type = "sp_tsc"
     
         print("consensus clustering with the (same kernel embedded) inherited bi-adjacency matrix get called")
         self.simulation_type = simulation_type
@@ -1888,13 +1183,10 @@ class SimData:
         if self.simulation_type == "tscu":
             self.eigenmatrix_sym(K = k) #l = K
         
-        #random.seed(0)
-        #np.random.seed(seed=int(time.time()))
         print("CPU_count: %s" % (mp.cpu_count()))
         print("Main process","PID: %s, Process Name: %s" % (os.getpid(), mp.current_process().name), "start working")
         
         print("k = ", k)
-        ##the methods depend on the self.simulation_type
         consensus_matrix = self.get_consensus_matrix(k, iteration, resamp_num) #list of arrays (tight clusters candidate)
         return(consensus_matrix)
 
@@ -2040,8 +1332,6 @@ if __name__ == "__main__":
     plt.colorbar(cax=cax)
     plt.savefig(root_dir + '/Y_covariate.pdf')
 
-
-# In[ ]:
 
 
 
