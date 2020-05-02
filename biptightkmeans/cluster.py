@@ -1,19 +1,8 @@
-
-# coding: utf-8
-
-# In[8]:
-
-#"/home/yidan/Dropbox/project_fly_worm/biptightkmeans/cluster.py"
-
-### project_fly_worm ###
-
-### main.py/main_eigen_plot.py file has same directory as package eigen_spectral
 from eigen_spectral.eigen_decomposition import my_spectral_embedding
 
 import pandas as pd
 import numpy as np
 import math
-#import random
 from copy import deepcopy
 import collections
 
@@ -32,8 +21,6 @@ from sklearn.metrics.pairwise import rbf_kernel
 from sklearn.metrics.pairwise import laplacian_kernel
 from sklearn.metrics.pairwise import pairwise_kernels
 
-#from numpy.linalg import inv
-#from scipy.linalg import sqrtm
 from scipy.linalg import eigh
 from scipy.sparse.linalg import eigsh
 
@@ -47,9 +34,6 @@ from scipy.cluster.hierarchy import dendrogram, linkage, fcluster, leaves_list
 
 from sklearn.cluster import spectral_clustering
 from sklearn.manifold import spectral_embedding
-#from sklearn.metrics import mutual_info_score
-#from sklearn.metrics import normalized_mutual_info_score
-#from scipy.sparse import csgraph
 
 try:
     from .consensuscluster.consensus_cluster import cdf_area_plot_new
