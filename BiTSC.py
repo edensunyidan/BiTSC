@@ -56,7 +56,7 @@ if __name__ == "__main__":
     except FileExistsError:
         pass
 
-    output_hc = bitkmeans.fit_hierarchical_clustering(k=k_min, alpha_vec=alpha_vec, plot_root_dir=root_dir_savedata,
+    output_hc = bitkmeans.fit_hierarchical_clustering(k_min=k_min, k_max=k_max, alpha_vec=alpha_vec, plot_root_dir=root_dir_savedata,
                                                       thre_min_cluster_left=one_thre, thre_min_cluster_right=two_thre,
                                                       iteration=iteration, resamp_num=resamp_num)
     for alpha in alpha_vec:
