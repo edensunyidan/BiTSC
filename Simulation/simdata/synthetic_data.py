@@ -45,11 +45,8 @@ import json
 import time
 import gc
 
-#"/home/yidan/Dropbox/project_fly_worm/simulation/synthetic_data.py"
 __Author__ = "Yidan Sun"
 
-
-# In[ ]:
 
 class SimData:
     
@@ -108,15 +105,6 @@ class SimData:
 
         self.muy = muy_keeper
     
-        """
-        self.mux = np.random.multivariate_normal(mean=np.zeros(d_1, dtype=np.float64), cov=np.eye(d_1, dtype=np.float64)*large_sigma, size=K) 
-        self.muy = np.random.multivariate_normal(mean=np.zeros(d_2, dtype=np.float64), cov=np.eye(d_2, dtype=np.float64)*large_sigma, size=K) 
-        """
-        """
-        # mean vectors are generated along the "diagonal"
-        self.mux = np.array([np.repeat((i+1)*delta, d_1) for i in np.arange(K)])
-        self.muy = np.array([np.repeat((i+1)*delta, d_2) for i in np.arange(K)])
-        """
         
         #small_sigma = i+1
         self.iX = np.array([np.random.multivariate_normal(mean=self.mux[i], cov=((0.1*(i+1))**2)*np.eye(d_1, dtype=np.float64), size=M)
@@ -236,27 +224,7 @@ class SimData:
         
         self.leftnodes = self.iX.shape[0]
         self.rightnodes = self.iY.shape[0]
-        
-        """
-        FPKM --> log2 transformation --> standardization_sample
-        FPKM --> log2 transformation --> PCA
-        FPKM --> log2 transformation --> quantile normalization
-        FPKM --> standardization_sample
-        scImpute: X_{ij} = log10(X_{ij} + 1.01)
-        """
-        #self.log_transformation()
 
-        #self.standardization_feature()
-        #self.standardization_sample() 
-        #self.normalization()
-        
-        #if self.use_pca == True: #data standardization
-            #self.pca()
-        
-        #self.orthologs_dict()
-        #self.adjacency() 
-        #self.update_sample()
-        
         
     def update_sample(self):
         """this method should be called as long as self.leftindexs/rightindexs has been changed"""
@@ -409,39 +377,16 @@ class SimData:
     def add_value_based(self, value_t=0.95):
         
         print(".add_value_based() get called")
-        """
-        index_x = np.array(list(combinations(np.arange(self.leftnodes), 2)))
-        index_y = np.array(list(combinations(np.arange(self.rightnodes), 2)))
-        """
-        """
-        ###RuntimeWarning: invalid value encountered in double_scalars r = r_num / r_den. 
-        pearsonr_X = np.absolute(np.array([pearsonr(self.iX[i,], self.iX[j,])[0] for (i, j) in index_x]))
-        pearsonr_Y = np.absolute(np.array([pearsonr(self.iY[i,], self.iY[j,])[0] for (i, j) in index_y]))
-        """
-        """
-        ###the equivalence of normalized Euclidean distance and Pearson Coefficient: dE(rnorm, snorm)**2 = 2*d*dP (rnorm, snorm)
-        pearsonr_X = np.absolute(np.array([1-(euclidean(self.iX[i,], self.iX[j,])**2)/(2*self.left_dim) for (i, j) in index_x]))
-        pearsonr_Y = np.absolute(np.array([1-(euclidean(self.iY[i,], self.iY[j,])**2)/(2*self.right_dim) for (i, j) in index_y]))
-        
-        pearsonr_X = (pearsonr_X >= value_t).astype(np.uint16)
-        pearsonr_Y = (pearsonr_Y >= value_t).astype(np.uint16)
-        
-        pearsonr_X = squareform(pearsonr_X, force='tomatrix') #the diagonal elements are zero. np.fill_diagonal(pearsonr_X, 1), no edge connect self
-        pearsonr_Y = squareform(pearsonr_Y, force='tomatrix')
-        """  
+
         pearsonr_X = np.absolute(1 - (euclidean_distances(self.iX)**2)/(2*self.left_dim))
         pearsonr_Y = np.absolute(1 - (euclidean_distances(self.iY)**2)/(2*self.right_dim))
         
         np.fill_diagonal(pearsonr_X, 0) #no self-connect edge
         np.fill_diagonal(pearsonr_Y, 0) #no self-connect edge
-        """
-        np.greater_equal(pearsonr_X, value_t, out=pearsonr_X, dtype=np.uint16) #dtype=np.uint16! #check the matrix is symmetric
-        np.greater_equal(pearsonr_X, value_t, out=pearsonr_X, dtype=np.uint16) #dtype=np.uint16! #check the matrix is symmetric
-        """
+
         pearsonr_X = (pearsonr_X >= value_t).astype(np.uint16) #check the matrix is symmetric
         pearsonr_Y = (pearsonr_Y >= value_t).astype(np.uint16) #check the matrix is symmetric
         
-        #The bi_adjacency matrix. self.W == self.W.T
         self.W = np.concatenate((np.concatenate((pearsonr_X, self.A), axis=1), 
                                  np.concatenate((self.A.T, pearsonr_Y), axis=1)), axis=0)
         
@@ -457,12 +402,7 @@ class SimData:
         
         
     def keep_largest_component(self):
-        """
-        Delete the other connected components, and only keep the largest one.
-        Need to check the # of connected components w/ kernel after calling this method
-        ###considering directly slice the kernel matrix or rank_based correlation matrix (self.W) instead   
-        ###reconstruct the kernel matrix /others??? consider change in cluster.py???
-        """
+
         big_comp = np.argmax(np.array([np.sum(self.component_list == i) for i in range(self.N_components)])) #.astype(np.int32) #numpy.int64
         
         #You may select rows from a DataFrame using a boolean vector the same length as the DataFrame’s index
@@ -1259,21 +1199,6 @@ if __name__ == "__main__":
     rank_d = 5
     
     value_t = 0.95
-
-    #lambda_hat without considering the noise nodes.
-    #lambda_average = (2*M*N*K/(M+N))*(q + (1/K)*(p-q))
-    #print(lambda_average)
-
-    #expected average degree
-    #lambda_hat = (2*M*N*K/((M+N)*(1+noise_p)))*(q*((1+noise_p)**2) + (1/K)*(p-q))
-    #print(lambda_hat)
-    
-    #average degree
-    #lambda_hat = (2*np.sum(Initial.A))/(Initial.leftnodes+Initial.rightnodes)
-
-    #perturbation = (lambda_hat/((M+N)*K*(1+noise_p)))*0.25 ###the elbow point are not so clear
-    #perturbation = (lambda_hat/((M+N)*K*(1+noise_p)))*0.1
-    #print(perturbation)
     
     data = SimData(M, N, K, d_1, d_2, small_sigma, large_sigma, p=p, q=q, noise_ratio=noise_ratio, samp_p=samp_p, 
                    tao=tao, kernel=kernel, rank_based=rank_based, value_based=value_based, gamma=gamma, 
