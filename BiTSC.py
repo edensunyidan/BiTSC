@@ -26,31 +26,28 @@ if __name__ == "__main__":
     drop=True
     kernel = True
     
-    samp_p = float(sys.argv[7])
+    samp_p = float(sys.argv[8])
     
-    #################################################################################################################
     bitkmeans = BitKmeans(left_raw_data=sideone_raw_data, right_raw_data=sidetwo_raw_data, orthologs_data=linkage_data,
                           samp_p=samp_p, tao=tao, drop=drop, kernel=kernel)
-                          
-    #bitkmeans.eigenmatrix_sym(K = 500)
-    #################################################################################################################
         
     k_min = int(sys.argv[4])
-
-    resamp_num = int(sys.argv[5])
-    iteration = int(int(sys.argv[6])/resamp_num)
+    k_max = int(sys.argv[5])
+    
+    resamp_num = int(sys.argv[6])
+    iteration = int(int(sys.argv[7])/resamp_num)
     print("resamp_num: ", resamp_num)
     print("iteration: ", iteration)
     
-    one_thre = int(sys.argv[8])
-    two_thre = int(sys.argv[9])
+    one_thre = int(sys.argv[9])
+    two_thre = int(sys.argv[10])
     
-    root_dir_savedata = sys.argv[10]
+    root_dir_savedata = sys.argv[11]
     
     arguments = len(sys.argv) - 1
     alpha_vec = []
     
-    for i in range(11, arguments+1):
+    for i in range(12, arguments+1):
         alpha = float(sys.argv[i])
         alpha_vec.append(alpha)
     
