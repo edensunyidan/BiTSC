@@ -51,6 +51,11 @@ from sklearn.manifold import spectral_embedding
 #from sklearn.metrics import normalized_mutual_info_score
 #from scipy.sparse import csgraph
 
+try:
+    from .consensuscluster.consensus_cluster import cdf_area_plot_new
+except Exception:
+    from consensuscluster.consensus_cluster import cdf_area_plot_new
+
 import multiprocessing as mp
 import os
 import json
@@ -70,19 +75,6 @@ import matplotlib.pyplot as plt
 
 
 __Author__ = "Yidan Sun"
-
-"""Consider the log-transformation of the data"""
-
-"""If not keep it as a connected component"""
-    
-"""If we consider co-expression edges or add kernel, do we still need to remove genes that are not in the orthologs list"""
-    
-"""combine the timecourse and tissuecell data together"""
-    
-"""Delete the genes which has zero expression and also no orthologs"""
-    
-"""How to deal with the zero values if gene expression is zeros"""
-
 
 class BitKmeans:
     """Bipartite Tight Kmeans clustering"""
@@ -1548,17 +1540,51 @@ class BitKmeans:
         #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "end.")
 
 
-    def fit_hierarchical_clustering(self, k, alpha_vec, plot_root_dir, thre_min_cluster_left, thre_min_cluster_right, iteration, resamp_num):
-        ###we can add the heatmap of the comembership matrix to check???
+    def fit_hierarchical_clustering(self, k_min, k_max, alpha_vec, plot_root_dir, thre_min_cluster_left, thre_min_cluster_right, iteration, resamp_num, delta=0.05):
+        
+        print("select K_0 by binary segmentation")
+        #automatically selects K_0
+        #k_vec: [k_min, k_max] = [5, 50]
+        
+        #k_min = k_vec[0]
+        #k_max = k_vec[1]
+
+        k_min = k_min
+        k_max = k_max
+        k_mid = math.ceil((k_min + k_max)/2)
+        print("K_min: ", k_min)
+        print("K_max: ", k_max)
+        print("K_mid: ", k_mid)
+
+        print("get CDF under k_min")
+        cdf_k_min = self.get_cdf_consensus_matrix(k=k_min, iteration=iteration, resamp_num=resamp_num)
+        areaK_k_min = cdf_k_min['area']
+        
+        print("get CDF under k_max")
+        cdf_k_max = self.get_cdf_consensus_matrix(k=k_max, iteration=iteration, resamp_num=resamp_num)
+        areaK_k_max = cdf_k_max['area']
+        
+        print("get CDF under k_mid")
+        cdf_k_mid = self.get_cdf_consensus_matrix(k=k_mid, iteration=iteration, resamp_num=resamp_num)
+        areaK_k_mid = cdf_k_mid['area']
+        
+        while (min(abs((areaK_k_min - areaK_k_mid)/areaK_k_min), abs((areaK_k_mid - areaK_k_max)/areaK_k_mid) ) > 0.05) & (k_min < k_max):
+            
+            k_mid = math.ceil((k_min + k_max)/2)
+            cdf_k_mid = self.get_cdf_consensus_matrix(k=k_mid, iteration=iteration, resamp_num=resamp_num)
+            areaK_k_mid = cdf_k_mid['area']
+            
+            if abs((areaK_k_min - areaK_k_mid)/areaK_k_min) < abs((areaK_k_mid - areaK_k_max)/areaK_k_mid):
+                k_max = k_mid
+                areaK_k_max = areaK_k_mid
+            else:
+                k_min = k_mid
+                areaK_k_min = areaK_k_mid
+        
+        k = k_mid
+        print("automatically find K_0: ", k)
         
         print("hierarchical clustering with the (same kernel embedded) inherited bi-adjacency matrix get called")
-        #self.simulation_type = "tsc"
-        #self.simulation_type = "sp_tsc"
-        print(self.simulation_type)
-        if self.simulation_type == "tsc":
-            self.eigenmatrix_sym(K = 30) #l = K
-        if self.simulation_type == "tscu":
-            self.eigenmatrix_sym(K = 30) #l = K
 
         #random.seed(0)
         #np.random.seed(seed=int(time.time()))
@@ -1590,25 +1616,33 @@ class BitKmeans:
                 
                 tclust.append(found_temp)
                 tclust_id.append(sub_tclust_id)
- 
-            
-            #output_alpha = dict(tclust=tclust, tclust_id = tclust_id, left_id=left_id, right_id=right_id)
+
             output_alpha = dict(tclust=tclust, tclust_id=tclust_id)
-            ###separate fly genes with worm genes in a co-cluster
-            #tclust_id[i][tclust[i] < len(left_id)]
-            #tclust_id[i][tclust[i] > len(left_id)]
-            #self.estimated_k = len(tclust)
-            #print("Number of co-clusters found by hierarchical clustering (one-step tsc)" + str(self.estimated_k))
             output[alpha] = output_alpha
-        
-        #Output gene lists which does not vary with alpha
-  
-        #output['left_id']=(self.left_id).tolist()
-        #output['right_id']=(self.right_id).tolist()
-
-        return(output)
             
-
+        return(output)
+    
+            
+    def get_cdf_consensus_matrix(self, k, iteration, resamp_num):
+    
+        #print("consensus clustering with the (same kernel embedded) inherited bi-adjacency matrix get called")
+        
+        #random.seed(0)
+        #np.random.seed(seed=int(time.time()))
+        print("CPU_count: %s" % (mp.cpu_count()))
+        print("Main process","PID: %s, Process Name: %s" % (os.getpid(), mp.current_process().name), "start working")
+        
+        print("k = ", k)
+        ##the methods depend on the self.simulation_type
+        consensus_matrix = self.get_consensus_matrix(k, iteration, resamp_num) #list of arrays (tight clusters candidate)
+        #print("finish get the consensus matrix")
+        #return(consensus_matrix)
+        
+        #print("start to get the empirical CDF of consensus matrix")
+        cdf = cdf_area_plot_new(consensus_matrix)
+        return(cdf)
+    
+        
     def fit_consensus_clustering(self, k, iteration, resamp_num, simulation_type):
         ###we can add the heatmap of the comembership matrix to check???
         #self.simulation_type = "tsc"
