@@ -48,5 +48,5 @@ $ python3 BiTSC.py ortho_dir one_dir two_dir K_0_min K_0_max ncores niters subpr
 ### An example on the fly-worm data:
 In the directory of ```BiTSC-master```, run:
 ```console
-$ python3 BiTSC.py ./data/orthologs_data_uniq.csv ./data/dm_timecourse_FPKMs.csv ./data/ce_timecourse_FPKMs.csv 10 50 10 100 0.8 10 10 ./data/result 0.90 0.95 1.00
+$ python3 BiTSC.py ./data/orthologs_data_uniq.csv ./data/dm_timecourse_FPKMs.csv ./data/ce_timecourse_FPKMs.csv 5 50 10 100 0.8 10 10 ./data/result 0.90 0.95 1.00
 ```
