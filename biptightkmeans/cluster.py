@@ -92,16 +92,6 @@ class BitKmeans:
         print("worm raw data size: ", self.right_data.shape)
         print("orthologs raw data size: ", self.orthologs_data.shape)
         
-        """
-        if drop == True:
-            self.left_data = self.left_data[(self.left_data.iloc[:, 1:] != 0).any(axis=1) |
-                                            self.left_data.loc[:, 'gene_id'].isin(list(self.orthologs_data.loc[:, 'V4']))]
-            self.right_data = self.right_data[(self.right_data.iloc[:, 1:] != 0).any(axis=1) |
-                                              self.right_data.loc[:, 'gene_id'].isin(list(self.orthologs_data.loc[:, 'V5']))]
-            print("keeping the genes in the original orthologs, and adding more other genes whose expression are non-zeros ")
-            print("fly data size with allZeros and no edges connceted rows deleted: ", self.left_data.shape[0])
-            print("worm data size with allZeros and no edges connected rows deleted: ", self.right_data.shape[0])
-        """
         
         if drop == True:
             self.left_data = self.left_data[(self.left_data.iloc[:, 1:] != 0).any(axis=1)]
@@ -132,12 +122,6 @@ class BitKmeans:
         
         self.left_dim = self.iX.shape[1]
         self.right_dim = self.iY.shape[1]
-
-        #FPKM --> log2 transformation --> standardization_sample
-        #FPKM --> log2 transformation --> PCA
-        #FPKM --> log2 transformation --> quantile normalization
-        #FPKM --> standardization_sample
-        #scImpute: X_{ij} = log10(X_{ij} + 1.01)
 
         self.log_transformation()
     
@@ -170,45 +154,7 @@ class BitKmeans:
         self.add_edge()
 
         self.U = None
-     
-    """
-    def update_data(self):
-        ### It will be called 2nd time if we need to reduce the bipartite network into a fully connected component
-        
-        self.slice_orthologs()
-        self.left_id = self.left_data.loc[:, self.left_data.columns[0]].values # 2d numpy array
-        self.iX = self.left_data.drop(labels=self.left_data.columns[0], axis=1).values # Return a new object
-        self.leftindexs = np.arange(len(self.left_id))
-  
-        self.right_id = self.right_data.loc[:, self.right_data.columns[0]].values # 2d numpy array
-        self.iY = self.right_data.drop(labels=self.right_data.columns[0], axis=1).values 
-        self.rightindexs = np.arange(len(self.right_id))
-        
-        self.leftnodes = len(self.left_id)  
-        self.rightnodes = len(self.right_id)
-        
-        self.left_dim = self.iX.shape[1]
-        self.right_dim = self.iY.shape[1]
-        
-        #FPKM --> log2 transformation --> standardization
-        #FPKM --> log2 transformation --> quantile transformation --> PCA
-        #FPKM --> standardization
-        #FPKM --> standardization_sample
-        #scImpute: X_{ij} = log10(X_{ij} + 1.01)
 
-        self.log_transformation()
-
-        #self.standardization_feature()
-        self.standardization_sample()
-        #self.normalization()
-        
-        if self.use_pca == True: #data standardization
-            self.pca()
-        
-        self.orthologs_dict()
-        self.adjacency() 
-        self.update_sample()
-    """
 
     def add_edge(self):
         """
@@ -248,7 +194,6 @@ class BitKmeans:
 
            
     def slice_orthologs(self):
-        ###I want to keep those expressed genes but no edges connected
         print("make the nameset of orthologs data belongs to the nameset of fly_worm")
         self.orthologs_data = self.orthologs_data[self.orthologs_data.loc[:, 'V4'].isin(list(self.left_data.loc[:, 'gene_id']))]
         self.orthologs_data = self.orthologs_data[self.orthologs_data.loc[:, 'V5'].isin(list(self.right_data.loc[:, 'gene_id']))]
@@ -379,38 +324,9 @@ class BitKmeans:
 
 
     def add_rank_based(self, rank_d=5):
-        """
-        Mutli-layer network: edges within each single sides are allowed
-        Genes in one species will be connected if they are co-associated in a co-expression network 
-        (Jianhua Ruan, Angela K Dean, Weixiong Zhang. 2010) 1. rank-based; 2. value-based
-        
-        Pearson’s correlation requires that each dataset be normally distributed;
-        p-value of pearson correlation roughly indicates the probability of an uncorrelated system producing 
-        datasets that have a Pearson correlation at least as extreme as the one computed from these datasets. 
-        The p-values are not entirely reliable but are probably reasonable for datasets larger than 500 or so.
-        
-        rank_d: the smallest value such that all genes form a fully connected component.
-        
-        the ajacency matrix(self.W)/laplacian matrix(self.L) is symmetric <=> edges are undirected 
-        """
+
         print(".add_rank_based() get called")
-        """
-        index_x = np.array(list(combinations(np.arange(self.leftnodes), 2)))
-        index_y = np.array(list(combinations(np.arange(self.rightnodes), 2)))
-        """
-        """
-        ###RuntimeWarning: invalid value encountered in double_scalars r = r_num / r_den.
-        pearsonr_X = np.absolute(np.array([pearsonr(self.iX[i,], self.iX[j,])[0] for (i, j) in index_x]))
-        pearsonr_Y = np.absolute(np.array([pearsonr(self.iY[i,], self.iY[j,])[0] for (i, j) in index_y]))
-        """
-        """Find a faster way (e.g, a function;) to get the Pairwise distances between observations in n-dimensional space
-        pearsonr_X = np.absolute(np.array([1-(euclidean(self.iX[i,], self.iX[j,])**2)/(2*self.left_dim) for (i, j) in index_x]))
-        pearsonr_Y = np.absolute(np.array([1-(euclidean(self.iY[i,], self.iY[j,])**2)/(2*self.right_dim) for (i, j) in index_y]))
-        """
-        """
-        pearsonr_X = squareform(pearsonr_X, force='tomatrix') #the diagonal elements are zero. np.fill_diagonal(pearsonr_X, 1), no edge connect self
-        pearsonr_Y = squareform(pearsonr_Y, force='tomatrix')
-        """
+
         ###np.absolute(x, out=x)
         pearsonr_X = np.absolute(1 - (euclidean_distances(self.iX)**2)/(2*self.left_dim))
         pearsonr_Y = np.absolute(1 - (euclidean_distances(self.iY)**2)/(2*self.right_dim))
@@ -550,12 +466,6 @@ class BitKmeans:
         
         
     def keep_largest_component(self):
-        """
-        Delete the other connected components, and only keep the largest one.
-        Need to check the # of connected components w/ kernel after calling this method
-        """
-        ###considering directly slice the kernel matrix or rank_based correlation matrix (self.W) instead
-        ###reconstruct the kernel matrix /others??? consider change in cluster.py???
         big_comp = np.argmax(np.array([np.sum(self.component_list == i) for i in range(self.N_components)])) #.astype(np.int32) #numpy.int64
         
         #You may select rows from a DataFrame using a boolean vector the same length as the DataFrame’s index
@@ -571,8 +481,7 @@ class BitKmeans:
             
             # we don't modify self.A in the add_kernel() step, just creat a new instance, self.KA
             ###self.W = self.W[data_mask][:, data_mask]
-            
-            ###if self.use_pca == True, do we have recalculate the pca.fit ???
+
             self.iX = self.iX[left_data_mask]
             self.iY = self.iY[right_data_mask]
             self.A = self.A[left_data_mask][:, right_data_mask]
@@ -626,7 +535,6 @@ class BitKmeans:
 
 
     def update_sample(self):
-        """this method should be called as long as self.leftindexs/rightindexs has been changed"""
 
         print(".update_sample() get called")
         self.m = math.floor(self.samp_p*len(self.leftindexs))
@@ -636,17 +544,6 @@ class BitKmeans:
 
     
     def eigenmatrix_sym(self, K):
-        """l = ceiling(log2K), K is # of true clusters [Inderjit S. Dhillon, 2001]"""
-        """Normalized spectral clustering according to Ng, Jordan, and Weiss (2002)"""
-        """L_sym is symmetric real matrix, positive semi-definite"""
-        """select the first K eigenvectors of the Laplacian matrix"""
-        ###inv(sqrtm(D)) <=> np.diag(np.reciprocal(np.sqrt(np.diag(D)))) #test the speed
-        
-        #D1 = np.diag(np.sum(self.A, axis=1))
-        #D2 = np.diag(np.sum(self.A, axis=0))
-
-        #self.D = np.vstack((np.hstack((D1, np.zeros((self.leftnodes, self.rightnodes), dtype=np.uint16))),
-                            #np.hstack((np.zeros((self.rightnodes, self.leftnodes), dtype=np.uint16), D2))))
  
         print("start to run .spectral_embedding() to construct the laplacian matrix")
         start_time = time.time()
@@ -666,7 +563,6 @@ class BitKmeans:
         
     
     def eigenmatrix_rw(self, K):
-        """Normalized spectral clustering according to Shi and Malik (2000)"""
 
         print("start to calculate the unnormalized laplacian matrix")
         self.D = np.diag(np.sum(self.W, axis=1))
@@ -785,147 +681,6 @@ class BitKmeans:
             print("The generalized eigenvalue problem (L_rw) has complex eigenvalues/eigenvectors!")
         
         return(U)
-
-
-    def fit(self, target, k_min, alpha, beta, seq_num, iteration, resamp_num, remain_p, k_stop):
-        """
-        Algorithm 2: Sequential identification of tight and stable clusters
-
-        target The total number of clusters that the user aims to find
-        k_min The starting point of k0
-        top_can The number of top (size) candidate clusters for a specific k0
-        seq_num The number of subsequent k0 that finds the tight cluster
-        resamp_num Total number of resampling to obtain comembership matrix
-        remain_p Stop searching when the percentage of remaining points <= remain_p
-        k_stop Stop decreasing k0 when k0 <= k_stop
-
-        Choose the largest candidate from the tight cluster candidates (>=beta), 
-        so that no need to specify q(top_can)
-        """
-        """Open question: how to specify/identify the number of clusters: K; Try multiple values"""
-        
-        print(".fit() method for sequentially tsc get called")
-        #self.simulation_type = "tsc"
-        #print(self.simulation_type)
-        print(self.simulation_type)
-        
-        """
-        sequentially identify tight and stable co-clusters:
-        self.fit()
-           sp_tsc
-           tsc
-           tscu
-        one-step hierarchical clustering to identify tight co-clusters candidate:
-        self.fit_hierarchical_clustering()
-           sp_tsc_hc
-           tsc_hc
-           tscu_hc
-        """
-
-        if self.simulation_type == "tsc":
-            self.eigenmatrix_sym(K = 30) #l = K
-        
-        if self.simulation_type == "tscu":
-            self.eigenmatrix_sym(K = 30) #l = K
-        
-        
-        #random.seed(0)
-        print("CPU_count: %s" % (mp.cpu_count()))
-        print("Main process","PID: %s, Process Name: %s" % (os.getpid(), mp.current_process().name), "start working")
-        #print("Total number of points on the left side: " + str(self.leftnodes))
-        #print("Total number of points on the right side: " + str(self.rightnodes))
-
-        """
-        if self.estimated_k != None:
-            k_start = self.estimated_k
-        else:
-            k_start = k_min
-        """
-        
-        nfound = 0
-        found = True 
-        k_max = k_min+10
-        #k_max = k_min+15
-        k0 = k_min
-        #k = k0
-
-        tclust = []
-        tclust_id = []
-            
-        while ((nfound < target) and ((len(self.leftindexs)/self.leftnodes) > remain_p) and ((len(self.rightindexs)/self.rightnodes) > remain_p) and (found or (k <= k_max))):
-                
-            if found:
-                print("Looking for tight cluster " + str(nfound + 1) + "...")
-                k = k0
-                candidates = []
-                for i in np.arange(seq_num): 
-                    print("k = " + str(k + i))
-                    candidates.append(self.find_candidates(k + i, alpha, iteration, resamp_num))
-
-            else: 
-                del candidates[0]  
-                candidates.append(self.find_candidates(k+seq_num-1, alpha, iteration, resamp_num)) 
-
-            beta_temp, index_m = self.calc_beta(candidates)
-
-            if np.any(beta_temp >= beta):
-                found = True
-                nfound = nfound + 1
-                print(str(nfound) + " tight cluster found!")
-                if k0 > k_stop:
-                    k0 = k0 - 1
-
-                #found_temp = candidates[seq_num-1][index_m[np.argmax(beta_temp>=beta), seq_num-1]]   
-                #found_temp = candidates[seq_num-1][index_m[np.nonzero(beta_temp>=beta)[0][0], seq_num-1]]
-                #found_temp_index = np.concatenate((INIT.leftindexs, INIT.rightindexs), axis=0)[found_temp]
-                found_temp = candidates[seq_num-1][np.amin(index_m[beta_temp>=beta, seq_num-1])]
-                found_temp = list(map(int, found_temp))
-                #tclust.append(found_temp)
-                sub_tclust_id = []
-
-                for index_i in found_temp:
-
-                    if index_i in self.leftindexs:
-                        self.leftindexs = self.leftindexs[self.leftindexs != index_i]
-                        found_id = self.left_id[index_i]  
-                    else:
-                        self.rightindexs = self.rightindexs[self.rightindexs != (index_i - self.leftnodes)]
-                        found_id = self.right_id[(index_i - self.leftnodes)]
-
-                    sub_tclust_id.append(found_id)
-
-                tclust.append(found_temp)
-                tclust_id.append(sub_tclust_id)
-                print("Cluster size: "+ str(len(found_temp)))
-                #print("Cluster index: ", found_temp)
-                print("Cluster id: ", sub_tclust_id)
-
-                self.update_sample()
-
-                print("Remaining number of points on the left side: " + str(len(self.leftindexs)))
-                print("Remaining number of points on the right side: " + str(len(self.rightindexs)))
-
-            else:
-                found = False
-                k = k + 1
-                print("Not found!")
-                print("k = " + str(k))
-
-        #end while  
-
-        left_id = (self.left_id).tolist()
-        right_id = (self.right_id).tolist()
-        output = dict(tclust=tclust, tclust_id = tclust_id, left_id=left_id, right_id=right_id)
-        #output = dict(tclust=tclust, tclust_id = tclust_id)
-        #print('output: ' + str(output))
-        #with open(root + 'results.json', 'w') as f:
-            #json.dump(output, f)
-
-        ###separate fly genes with worm genes in a co-cluster
-        #tclust_id[i][tclust[i] < len(left_id)]
-        #tclust_id[i][tclust[i] > len(left_id)]
-
-        return(output)
 
 
     def find_candidates(self, k, alpha_vec, plot_root_dir, thre_min_cluster_left=10, thre_min_cluster_right=10, iteration=5, resamp_num=10):
@@ -1098,19 +853,6 @@ class BitKmeans:
             for p in processes:
                 p.start()
 
-            """
-            # Get process results from the output queue
-            print("Start getting comembership matrixs from the Queue")
-            #D_bar_sub = [output.get() for p in processes]
-            D_bar_sub = 0 #broadcasting
-            for p in processes:
-                D_bar_sub += output.get()
-            print("End getting comembership matrixs from the Queue")
-            """
-    
-            # Get process results from the output queue
-            #print("Start getting comembership matrixs from the Queue")
-            #D_bar_sub = [output.get() for p in processes]
             D_bar_sub = 0 #broadcasting
             for p in processes:
                 #D_bar_sub += output.get()
@@ -1120,26 +862,13 @@ class BitKmeans:
             
             del co_labels
             gc.collect()
-            #print("length of D_bar_sub: " + str(len(D_bar_sub)))
-            #print((D_bar_sub[0] == D_bar_sub[i]).all())
-                            
-            # Exit the completed processes
-            #print("Start joining the sub-processes")
+
             for p in processes:
                 p.join()
             #print("End joining the sub-processes")
                                     
             del output
-            gc.collect()
-                
-            #D_bar_1 = sum(D_bar_sub)/resamp_num
-            #D_bar_sub = np.sum(D_bar_sub, axis=0, dtype=np.uint16)/resamp_num
-            #D_bar_sub = np.sum(D_bar_sub, axis=0)/resamp_num #this step cause MemoryError
-            #D_bar_sub = sum(D_bar_sub)/resamp_num  ###calculate the co-membership matrix after finishing each iteration to save the memory
-            #D_bar_sub = D_bar_sub/resamp_num
-
-            #D_bar.append(D_bar_sub)
-            #D_bar += D_bar_sub
+            gc.collect() 
 
             D_bar += (D_bar_sub/resamp_num)
     
@@ -1148,8 +877,6 @@ class BitKmeans:
             
             print("End iteration: ", itr+1)
                 
-        #D_bar = np.sum(D_bar, axis=0)/iteration
-        #D_bar = sum(D_bar)/iteration  ### Membership matrix
         D_bar = D_bar/iteration
                     
         return D_bar
@@ -1163,11 +890,6 @@ class BitKmeans:
         
         After normalize/standardize the covariates data, use the Euclidean distance (or Monotonic ensemble)/pearson correlation"""
         
-        ###random.seed() ###Fail when use multiprocessing
-        #np.random.seed()
-        #print("Sub process","PID: %s, Process Name: %s, Random seed: %s" % (os.getpid(), mp.current_process().name, random_seed), "start working")
-        #np.random.seed(seed=int(time.time())) ###no sense, since the processes are almost lauched at the same time
-        #np.random.seed(seed=mp.current_process().name)
         np.random.seed(seed=random_seed)
         
         ###random.sample(population, k)
@@ -1196,11 +918,7 @@ class BitKmeans:
                         precompute_distances='auto', verbose=0, random_state=None, copy_x=True, n_jobs=1,
                         algorithm='auto').fit(sub_U)
         labels = kmeans.labels_ #numpy.array dtype=int32
-        """
-        If we use rank-based/rank-based method to connect the edges within species, then is it possible that
-        the difficulty to find the co-cluster is because we produce lots of clusters of single species
-        in the spectral clustering step(testify in the simulation study)???
-        """
+
         #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "finish the KMeans")
 
         left_labels = labels[ : self.m]  #llabels = labels[np.arange(Init.m)]
@@ -1213,7 +931,6 @@ class BitKmeans:
 
         X_centroid = []
         for i in np.arange(clusters_nb, dtype=np.uint16):
-            """It is possible that some clusters only contain single side genes after spectral clustering/Kmeans???"""
             if sum(left_labels == i) > 0:  #(left_labels == i).any()
                 x_centroid = np.sum(X1[left_labels == i], axis=0) / sum(left_labels == i)  #sum along the column
                 X_centroid.append((i, x_centroid))
@@ -1232,38 +949,6 @@ class BitKmeans:
         #Y_centroid_names = np.array(Y_centroid_names)
         Y_centroid_m = np.array(Y_centroid_m)   #.shape = (variables, observations)
 
-        #spearmanr() applied on two matrices will be time consuming, since it will calculate the correlation inside the single object 
-        #However, I found creating the following Spearman Correlation matrix is much more slower than the first way!
-
-        #index_xcentroid = list(product(np.arange(sum(~lmask)), np.arange(len(X_centroid)))) #or len(X_centroid_m)
-        #index_ycentroid = list(product(np.arange(sum(~rmask)), np.arange(len(Y_centroid))))
-
-        #list comprehension: for i, j ; for (i, j)  #check the direction of array for the reshape
-        #spearmanr_X = np.array([spearmanr(Init.X[~lmask][i], X_centroid_m[j])[0] for (i, j) in index_xcentroid]).reshape(sum(~lmask), -1)
-        #spearmanr_Y = np.array([spearmanr(Init.Y[~rmask][i], Y_centroid_m[j])[0] for (i, j) in index_ycentroid]).reshape(sum(~rmask), -1)
-
-        """
-        spearmanr_X = spearmanr(Init.X[~lmask].T, X_centroid_m.T)[0][:sum(~lmask), sum(~lmask):]
-        spearmanr_Y = spearmanr(Init.Y[~rmask].T, Y_centroid_m.T)[0][:sum(~rmask), sum(~rmask):]
-
-        ###consider the absolute correlations
-        spearmanr_X = np.absolute(spearmanr_X)
-        spearmanr_Y = np.absolute(spearmanr_Y)
-
-        #find the maximum index along the columns for each row
-        X_labels[~lmask] = np.array([X_centroid_names[i] for i in np.argmax(spearmanr_X, axis=1)])
-        Y_labels[~rmask] = np.array([Y_centroid_names[i] for i in np.argmax(spearmanr_Y, axis=1)])
-        """
-        """
-        index_xcentroid = list(product(np.arange(sum(~lmask)), np.arange(len(X_centroid)))) #or len(X_centroid_m)
-        index_ycentroid = list(product(np.arange(sum(~rmask)), np.arange(len(Y_centroid))))
-
-        #list comprehension: for i, j ; for (i, j)  #check the direction of array for the reshape
-        ###Euclidean distance / pearson correlation
-        euclidean_X = np.array([euclidean(self.X[~lmask][i], X_centroid_m[j]) for (i, j) in index_xcentroid]).reshape(sum(~lmask), -1)
-        euclidean_Y = np.array([euclidean(self.Y[~rmask][i], Y_centroid_m[j]) for (i, j) in index_ycentroid]).reshape(sum(~rmask), -1)
-        """
-
         euclidean_X = euclidean_distances(self.X[~lmask], X_centroid_m)
         euclidean_Y = euclidean_distances(self.Y[~rmask], Y_centroid_m)
         
@@ -1272,18 +957,6 @@ class BitKmeans:
         Y_labels[~rmask] = np.array([Y_centroid_names[i] for i in np.argmin(euclidean_Y, axis=1)]) #type(Y_centroid_names[0]): numpy.uint16
 
         co_labels = np.concatenate((X_labels, Y_labels), axis=0)  #len = self.leftindexs + self.rightindexs
-        #print(co_labels)
-        #print(co_labels.dtype)
-        
-        #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "start calculating the co_labels vector.")
-        ###MemoryError. datatype(int) itemsize, test on server using python script.
-        ###1.break the comembership_matrix into several blocks; or compress comembership_matrix into scipy.sparse.csr_matrix
-        ###2.return the co_labels instead of comembership_matrix, and then calculate the matrix in the find_candidates() step
-        ###output.put()
-        ###print(co_labels)
-        ###print(co_labels.dtype) to check
-        #comembership_matrix = np.equal.outer(co_labels, co_labels)*1
-        #output.put(comembership_matrix)
         
         #output.put((co_labels[:, np.newaxis] == co_labels[np.newaxis, :]).astype(np.uint16))
         output.put(co_labels)
@@ -1332,9 +1005,7 @@ class BitKmeans:
                         precompute_distances='auto', verbose=0, random_state=None, copy_x=True, n_jobs=1, 
                         algorithm='auto').fit(sub_U)
         labels = kmeans.labels_
-
-        ###When I use multiprocessing, one process got stuck at K-Means step and cannot finish it. Try my own KMeans function
-        ###K-Means function would be faster???
+        
         print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "finish the KMeans")
 
         U_remain = np.concatenate((self.U[self.leftindexs][~lmask], 
@@ -1359,16 +1030,7 @@ class BitKmeans:
         #print(co_labels.dtype)
         
         print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "start calculating the co_labels vector.")
-        ###MemoryError. datatype(int) itemsize, test on server using python script.
-        ###1.break the comembership_matrix into several blocks; or compress comembership_matrix into scipy.sparse.csr_matrix
-        ###2.return the co_labels instead of comembership_matrix, and then calculate the matrix in the find_candidates() step
-        ###output.put()
-        ###print(co_labels)
-        ###print(co_labels.dtype) to check
-        #comembership_matrix = np.equal.outer(co_labels, co_labels)*1
-        #output.put(comembership_matrix)
-        
-        #output.put((co_labels[:, np.newaxis] == co_labels[np.newaxis, :]).astype(np.uint16))
+
         output.put(co_labels)
         print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "get the co_labels vector.")
         
@@ -1378,26 +1040,8 @@ class BitKmeans:
         
 
     def simulation_sp_tsc(self, random_seed, clusters_nb, output):
-        """
-        slice the adjacency matrix A (kernel matrix/rank_based correlation matrix/value_based correlation matrix)
-        --> unified similarity matrix S_{\tau,\alpha} --> reconstruct the laplacian matrix
-        --> eigen-decomposition --> eigenmatrix --> kmeans
-        """
-        """
-        #sub_W = self.W[u_indexs][:, u_indexs]
-        ###after sub-sampling, some node may has no edge connected anymore.
-        ###therefore, instead of slice self.W, we need to reconstruct the adjacency matrix (with kernel)
-        /home/yidan/Dropbox/project_fly_worm/simulation/simdata/synthetic_data.py:682: RuntimeWarning: divide by zero encountered in true_divide
-        L_sym = np.identity(W.shape[0], dtype=np.uint16) - (W.T * (1/np.sqrt(np.diag(D)))).T * (1/np.sqrt(np.diag(D)))
-        /home/yidan/Dropbox/project_fly_worm/simulation/simdata/synthetic_data.py:682: RuntimeWarning: invalid value encountered in multiply
-        L_sym = np.identity(W.shape[0], dtype=np.uint16) - (W.T * (1/np.sqrt(np.diag(D)))).T * (1/np.sqrt(np.diag(D)))
-        """
+
         print(".simulation_sp_tsc() get called")
-        ###random.seed() ###Fail when use multiprocessing
-        #np.random.seed()
-        #np.random.seed(seed=int(time.time())) ###no sense, since the processes are almost lauched at the same time
-        #print("Sub process","PID: %s, Process Name: %s, Random seed: %s" % (os.getpid(), mp.current_process().name, random_seed), "start working")
-        #np.random.seed(seed=mp.current_process().name) ###wrong datatype
         np.random.seed(seed=random_seed)
                         
         ###random.sample(population, k)
@@ -1451,43 +1095,10 @@ class BitKmeans:
                                     np.concatenate((sub_A.T, np.zeros((sub_A.shape[1], sub_A.shape[1]), dtype=np.uint16)), axis=1)), axis=0)
             self.sub_find_connected_components(sub_W)
         
-        """
-        #sub_U = self.sub_eigenmatrix_rw(clusters_nb, sub_W)
-        sub_U = self.sub_eigenmatrix_sym(30, sub_W) # l = K
-        #sub_U = self.sub_eigenmatrix_sym(clusters_nb+1, sub_W) #l = log2(clusters_nb) + 1.
-        
-        #print("Sub process","PID: %s, Process Name: %s, randomly choose left points: %s and right points: %s" % (os.getpid(), mp.current_process().name, sum(lmask), sum(rmask)))
-        ###clusters_nb < sub_U.shape[0] !
-        
-        kmeans = KMeans(n_clusters=clusters_nb, init='k-means++', n_init=10, max_iter=300, tol=0.0001,
-                        precompute_distances='auto', verbose=0, random_state=None, copy_x=True, n_jobs=1,
-                        algorithm='auto').fit(sub_U)
-        labels = kmeans.labels_ #numpy.array dtype=int32
-        """
-        
-        """
-        _, sub_U = my_spectral_embedding(adjacency=sub_W, n_components=30, eigen_solver=None,
-                                         random_state=None, eigen_tol=0.0, norm_laplacian=True, drop_first=False)
-
-        sub_U = normalize(sub_U, norm="l2", axis=1, copy=True, return_norm=False)
-
-        kmeans = KMeans(n_clusters=clusters_nb, init='k-means++', n_init=10, max_iter=300, tol=0.0001,
-                        precompute_distances='auto', verbose=0, random_state=None, copy_x=True, n_jobs=1,
-                        algorithm='auto').fit(sub_U)
-        labels = kmeans.labels_ #numpy.array dtype=int32
-        """
-  
   
         labels = spectral_clustering(affinity=sub_W, n_clusters=clusters_nb, n_components=30, eigen_solver=None,
                                      random_state=None, n_init=10, eigen_tol=0.0, assign_labels='kmeans')
-        
-        
-        #print("Sub process","PID: %s, Process Name: %s" %(os.getpid(), mp.current_process().name), "finish the KMeans")
-        """
-        left_labels = labels[ : self.m]  #llabels = labels[np.arange(Init.m)]
-        right_labels = labels[self.m : ] #rlabels = labels[Init.m : (Init.m + Init.n)]
-        """
-                                                                                                                                                                    
+                                                                                                                                                               
         left_labels = labels[ : sum(lmask)]
         right_labels = labels[sum(lmask) : ]
                                                                                                                                                                             
@@ -1499,7 +1110,6 @@ class BitKmeans:
                                                                                                                                                                                             
         X_centroid = []
         for i in np.arange(clusters_nb, dtype=np.uint16):
-            """It is possible that some clusters only contain single side genes after spectral clustering/Kmeans???"""
             if sum(left_labels == i) > 0:  #(left_labels == i).any()
                 x_centroid = np.sum(X1[left_labels == i], axis=0) / sum(left_labels == i)  #sum along the column
                 X_centroid.append((i, x_centroid))
@@ -1520,11 +1130,7 @@ class BitKmeans:
                                                                                                                                                                                                                                                         
         euclidean_X = euclidean_distances(self.X[~lmask], X_centroid_m)
         euclidean_Y = euclidean_distances(self.Y[~rmask], Y_centroid_m)
-                                                                                                                                                                                                                                                                
-        ###Check the method which assign all of nodes into K centroids???
-        #euclidean_X = euclidean_distances(self.X, X_centroid_m)
-        #euclidean_Y = euclidean_distances(self.Y, Y_centroid_m)
-                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
         #find the minimum index along the columns for each row
         X_labels[~lmask] = np.array([X_centroid_names[i] for i in np.argmin(euclidean_X, axis=1)]) #type(X_centroid_names[0]): numpy.uint16
         Y_labels[~rmask] = np.array([Y_centroid_names[i] for i in np.argmin(euclidean_Y, axis=1)]) #type(Y_centroid_names[0]): numpy.uint16
@@ -1644,7 +1250,6 @@ class BitKmeans:
     
         
     def fit_consensus_clustering(self, k, iteration, resamp_num, simulation_type):
-        ###we can add the heatmap of the comembership matrix to check???
         #self.simulation_type = "tsc"
         #self.simulation_type = "sp_tsc"
     
@@ -1685,7 +1290,7 @@ class BitKmeans:
                 #u_temp = union(u_temp, set(temp[j]))
                 #i_temp = i_temp.intersection(set(temp[j]))
                 #u_temp = i_temp.union(set(temp[j]))
-                i_temp = np.intersect1d(i_temp, temp[j], assume_unique=True) ###???
+                i_temp = np.intersect1d(i_temp, temp[j], assume_unique=True) 
                 u_temp = np.union1d(u_temp, temp[j])
 
             similarity = len(i_temp)/len(u_temp)
