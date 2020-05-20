@@ -27,8 +27,20 @@ $ python3 BiTSC.py '--covariate' './data/node_covariate_one.csv' './data/node_co
 ```
 ### Input data files and parameters:
 
+#### Required input data
 1. ```-covariate```: path to node covariate datasets
 2. ```--edge```: path to edge datasets
+
+#### Optional input parameters
+1. ```--k```: 
+2. ```--kernel```:
+3. ```--tau```: 
+4. ```--ncore```:
+5. ```--niter```:
+5. ```--alpha```:
+5. ```--heatmap```:
+5. ```--threshold```:
+6. ```--output_dir```:
 
 ### Output files:
 1. ```cluster.txt```, clustering results
