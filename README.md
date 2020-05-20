@@ -23,30 +23,14 @@ $ cd Downloads/BiTSC-master
 ```
 3. In current directory, run:
 ```console
-$ python3 BiTSC.py ortho_dir one_dir two_dir K_0_min K_0_max ncores niters subprop one_thre two_thre out_dir alphas & disown
+$ python3 BiTSC.py '--covariate' './data/node_covariate_one.csv' './data/node_covariate_two.csv' '--edge' './data/edge_one_two.csv' & disown
 ```
 ### Input data files and parameters:
 
-1. ```ortho_dir```: path to orthology data .csv file
-2. ```one_dir```: path to node covariate data .csv file on side 1
-3. ```two_dir```: path to node covariate data .csv file on side 2
-4. ```K_0_min```: lower bound of K_0's
-5. ```K_0_max```: upper bound of K_0's
-6. ```ncores```: number of cores used in parallel computation
-7. ```niters```: number of iterations to run 
-8. ```subprop```: subsampling proportion in each iteration 
-9. ```one_thre```: minimum number of side 1 nodes in each output co-cluster 
-10. ```two_thre```: minimum number of side 2 nodes in each output co-cluster
-11. ```out_dir```: path to output folder directory
-12. ```alphas```: a series of tightness tuning parameters
+1. ```-covariate```: path to orthology data .csv file
+2. ```--edge```: path to node covariate data .csv file on side 1
 
 ### Output files:
 1. ```cluster.txt```, clustering results
-
 2. ```Alpha=a_value.pdf```, heatmaps of sub-consensus matrices corresponding to ```alphas```
 
-### An example on the fly-worm data:
-In the directory of ```BiTSC-master```, run:
-```console
-$ python3 BiTSC.py ./data/orthologs_data_uniq.csv ./data/dm_timecourse_FPKMs.csv ./data/ce_timecourse_FPKMs.csv 5 50 10 100 0.8 10 10 ./data/result 0.90 0.95 1.00
-```
