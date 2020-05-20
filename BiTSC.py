@@ -6,7 +6,6 @@ from scipy.special import comb
 import numpy as np
 from biptightkmeans.cluster_github import BitKmeans
 
-import json
 import gc
 
 
