@@ -32,17 +32,15 @@ $ python3 BiTSC.py '--covariate' './data/node_covariate_one.csv' './data/node_co
 2. ```--edge```: path to edge datasets
 
 #### Optional input parameters
-1. ```--k```: \[K_min, K_max\]. Default=\[5, 50\].
-2. ```--kernel```: Metric used when calculating kernel. Default = 'rbk'.
-3. ```--tau```: Vectors containing values of $\tau$'s. Default = 1.
-4. ```--ncore```:
-5. ```--niter```:
-5. ```--alpha```:
-5. ```--heatmap```:
-5. ```--threshold```:
-6. ```--output_dir```:
-
-#### Example:
+1. ```--k```: K_0 or \[K_min, K_max\]. Default=\[5, 50\].
+2. ```--kernel```: metric used when calculating kernel. Default = 'rbk'.
+3. ```--tau```: vector containing values of $\tau$'s. Default = 1.
+4. ```--ncore```: number of cores used in parallel computation
+5. ```--niter```: number of sub-sampling procedures
+5. ```--alpha```: vector containing values of $\alpha$'s
+5. ```--heatmap```: heatmap of sub-consensus matrix. Default = False.
+5. ```--threshold```: minimum number of nodes on each side to appear in the sub-consensus matrix.
+6. ```--output_dir```: path to output folder directory
 
 ### output:
 1. ```cluster.txt```, clustering results
