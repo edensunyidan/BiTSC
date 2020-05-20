@@ -34,19 +34,6 @@ if __name__ == "__main__":
     parser.print_help()
     args = parser.parse_args()
 
-    print(args.covariate)
-    print(args.edge)
-    print(args.k_vec)
-    print(args.kernel)
-    print(args.tao_vec)
-    print(args.rho)
-    print(args.num_core)
-    print(args.num_iteration)
-    print(args.alpha_vec)
-    print(args.heatmap)
-    print(args.thre_num_node)
-    print(args.root_dir_savedata)
-    
 
     if len(args.edge) != comb(len(args.covariate), 2):
         print("edge does not have the correct length: ", comb(len(args.covariate), 2))
