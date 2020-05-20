@@ -4,7 +4,7 @@ import os
 
 from scipy.special import comb
 import numpy as np
-from biptightkmeans.cluster_github import BitKmeans
+from biptightkmeans.cluster import BitKmeans
 
 import gc
 
