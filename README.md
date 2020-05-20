@@ -6,9 +6,9 @@ Yidan Eden Sun, Heather J. Zhou and Jingyi Jessica Li
 * numpy
 * scipy
 * pandas
-* json
 * sklearn
 * multiprocessing
+* matplotlib
 * scanpy
 * anndata
 * Ubuntu 16.04.6 LTS (GNU/Linux 4.4.0-157-generic x86_64)
@@ -27,8 +27,8 @@ $ python3 BiTSC.py '--covariate' './data/node_covariate_one.csv' './data/node_co
 ```
 ### Input data files and parameters:
 
-1. ```-covariate```: path to orthology data .csv file
-2. ```--edge```: path to node covariate data .csv file on side 1
+1. ```-covariate```: path to node covariate datasets
+2. ```--edge```: path to edge datasets
 
 ### Output files:
 1. ```cluster.txt```, clustering results
