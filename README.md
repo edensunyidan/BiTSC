@@ -32,7 +32,7 @@
 
 
 ## Examples
-In the Linux command line, run:
+In the Linux command line, run: \\
 ***Scenario 1 : 2 sides, unspecified parameters***
 ```console
 $ python3 BiTSC.py '--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' '--edge' 'edge_12.csv' 'edge_13.csv' 'edge_23.csv'    
