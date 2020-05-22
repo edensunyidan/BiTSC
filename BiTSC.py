@@ -29,9 +29,9 @@ if __name__ == "__main__":
     parser.add_argument('--alpha', nargs='*', type=float, default=[0.90, 0.95, 1.00], dest='alpha_vec')
     parser.add_argument('--heatmap', default=False)
     parser.add_argument('--threshold', type=int, default=10, dest='thre_num_node')
-    parser.add_argument('--output_dir', nargs=1, type=str, default='./', dest='root_dir_savedata')
+    parser.add_argument('--dir', nargs=1, type=str, default='./', dest='root_dir_savedata')
     
-    parser.print_help()
+    #parser.print_help()
     args = parser.parse_args()
 
 
