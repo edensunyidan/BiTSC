@@ -7,21 +7,21 @@
 ### Input data files:
 | data file          | format     | description   |
 | :---               | :---       | :---          |
-| ```--covariate```   | csv       | node covariate dataset. length  equals the number of species. length>=2. N arguments from the command line will be gathered together into a list|
-| ```--edge```       | csv        | edge dataset. length equals equals the combinatorial of number of species. ${n \choose x}$|
+| ```covariate```   | csv       | node covariate dataset. length  equals the number of species. length>=2. N arguments from the command line will be gathered together into a list|
+| ```edge```       | csv        | edge dataset. length equals equals the combinatorial of number of species. ${n \choose x}$|
 
 ### Input parameters:
 | parameters         | type       | description |
 | :---               | :---       | :---         |
-| ```--k```          | int        | \[K_0\] or \[K_min, K_max\]. Default=\[5, 50\]    |
-| ```--kernel```     | string     | metric used when calculating kernel. Default = 'rbk'   |
-| ```--tau```        | float      | vector containing values of $\tau$'s. Default = 1. otherwise, length equals equals the combinatorial of number of species. |
-| ```--ncore```      | int        | number of cores used in parallel computation     |
-| ```--niter```      | int        | number of sub-sampling procedures     |
-| ```--alpha```      | float      | vector containing values of $\alpha$'s   |
-| ```--heatmap```    | boolean    | heatmap of sub-consensus matrix. Default = False.      |
-| ```--threshold```  | int        | minimum number of nodes on each side to appear in the sub-consensus matrix.      |
-| ```--output_dir``` | string     | path to output folder directory  |
+| ```k```          | int        | \[K_0\] or \[K_min, K_max\]. Default=\[5, 50\]    |
+| ```kernel```     | string     | metric used when calculating kernel. Default = 'rbk'   |
+| ```tau```        | float      | vector containing values of $\tau$'s. Default = 1. otherwise, length equals equals the combinatorial of number of species. |
+| ```ncore```      | int        | number of cores used in parallel computation     |
+| ```niter```      | int        | number of sub-sampling procedures     |
+| ```alpha```      | float      | vector containing values of $\alpha$'s   |
+| ```heatmap```    | boolean    | heatmap of sub-consensus matrix. Default = False.      |
+| ```threshold```  | int        | minimum number of nodes on each side to appear in the sub-consensus matrix.      |
+| ```dir``` | string     | path to output folder directory  |
 
 
 #### Output:
