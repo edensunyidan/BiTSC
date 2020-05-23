@@ -51,7 +51,7 @@ $ python BiTSC.py \
 '--rho' '0.8' \
 '--ncore' '10' \
 '--niter' '100' \
-'--alpha' '0.9' '0.95' '1.00' \
+'--alpha' '0.90' '0.95' '1.00' \
 '--heatmap' 'True' \
 '--threshold' '10' \
 '--dir' './'
@@ -74,7 +74,7 @@ $ python BiTSC.py
 '--rho' '0.8' \
 '--ncore' '10' \
 '--niter' '100' \
-'--alpha' '0.9' '0.95' '1.00' \
+'--alpha' '0.90' '0.95' '1.00' \
 '--heatmap' 'True' \
 '--threshold' '10' \  
 '--dir' './'
