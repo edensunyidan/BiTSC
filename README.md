@@ -37,7 +37,7 @@
 **Scenario 1 : 2 sides, unspecified parameters**
 ```
 $ python BiTSC.py \
-'--covariate' 'cov_1.csv' 'cov_2.csv'  \ 
+'--covariate' 'cov_1.csv' 'cov_2.csv' \ 
 '--edge' 'edge_12.csv'    
 ```
 **Scenario 2 : 2 sides, specified parameters**
@@ -53,7 +53,7 @@ $ python BiTSC.py \
 '--niter' '100' \
 '--alpha' '0.9' '0.95' '1.00' \
 '--heatmap' 'True' \
-'--threshold' '10'
+'--threshold' '10' \
 '--dir' './'
 ```
 
@@ -76,6 +76,6 @@ $ python BiTSC.py
 '--niter' '100' \
 '--alpha' '0.9' '0.95' '1.00' \
 '--heatmap' 'True' \
-'--threshold' '10'   
+'--threshold' '10' \  
 '--dir' './'
 ```
