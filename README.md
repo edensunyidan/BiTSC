@@ -11,11 +11,11 @@
 | ```edge```      | csv      | edge dataset. Length=N(N-1)/2 |
 
 ## Input parameters
-| parameters       | type       | description |
+| parameter       | type       | description |
 | :---             | :---       | :---         |
 | ```k```          | int        | \[K_0\] or \[K_min, K_max\]. Default=\[5, 50\]      |
 | ```kernel```     | string     | metric used when calculating kernel. Default='rbk'   |
-| ```tau```        | float      | $\tau$'s. Length=N(N-1). Default=1 |
+| ```tau```        | float      | $\tau$'s. Length=N(N-1). Default=1's. For example, N=3, $\tau = \[(\tau_1, \tau_2), (\tau_1, \tau_3), (\tau_2, \tau_3)\]$ |
 | ```rho```        | float      | sub-sampling proportion. Default=0.8 |
 | ```ncore```      | int        | number of cores used in parallel computation. Default=10 |
 | ```niter```      | int        | number of sub-sampling iterations. Default=100 |
