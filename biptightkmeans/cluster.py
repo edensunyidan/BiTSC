@@ -48,13 +48,6 @@ class BitKmeans:
     
     def __init__(self, covariate_data_path, edge_data_path, kernel_type, samp_p, tao):
         
-        """
-        e.g.
-        [1,2,3]
-        covariate_data_vec = [covariate_data_1, covariate_data_2, covariate_data_3]
-        edge_data_vec = [edge_data_12, edge_data_13, edge_data_23]
-        """
-
         self.node_id_vec = []
         self.node_data_vec = []
         self.node_index_vec = []
@@ -257,8 +250,8 @@ class BitKmeans:
                 D_bar_sub_ann = anndata.AnnData(D_bar_sub, obs=D_bar_sub_obs, var=D_bar_sub_var)
                 sc.pl.heatmap(D_bar_sub_ann, D_bar_sub_ann.var.index.values.tolist(), cmap=plt.cm.Blues, use_raw=False, show_gene_labels=False, figsize=(5,5), groupby='Co-cluster')
                 
-                plt.title('Alpha$=%.2f$' % (alpha))
-                plt.savefig(plot_root_dir+'/Alpha$=%.2f$.pdf'% (alpha))
+                plt.title('alpha$=%.2f$' % (alpha))
+                plt.savefig(plot_root_dir+'/alpha$=%.2f$.pdf'% (alpha))
             
         return res
 
@@ -339,8 +332,8 @@ class BitKmeans:
                 D_bar_sub_ann = anndata.AnnData(D_bar_sub, obs=D_bar_sub_obs, var=D_bar_sub_var)
                 sc.pl.heatmap(D_bar_sub_ann, D_bar_sub_ann.var.index.values.tolist(), cmap=plt.cm.Blues, use_raw=False, show_gene_labels=False, figsize=(5,5), groupby='Co-cluster')
                 
-                plt.title('Alpha$=%.2f$' % (alpha))
-                plt.savefig(plot_root_dir+'/Alpha$=%.2f$.pdf'% (alpha))
+                plt.title('alpha$=%.2f$' % (alpha))
+                plt.savefig(plot_root_dir+'/alpha$=%.2f$.pdf'% (alpha))
             
         return res
 
