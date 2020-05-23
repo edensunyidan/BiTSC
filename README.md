@@ -16,6 +16,7 @@
 | ```k```          | int        | \[K_0\] or \[K_min, K_max\]. Default=\[5, 50\]    |
 | ```kernel```     | string     | metric used when calculating kernel. Default='rbk'   |
 | ```tau```        | float      | $\tau$'s. Length = ${N \choose 2}$. Default=1 |
+| ```rho```        | float      | sub-sampling proportion. Default=0.8 |
 | ```ncore```      | int        | number of cores used in parallel computation. Default=10 |
 | ```niter```      | int        | number of sub-sampling iterations. Default=100 |
 | ```alpha```      | float      | $\alpha$'s. Default=\[0.90, 0.95, 1.00\] |
@@ -50,9 +51,10 @@ $ python BiTSC.py \
 '--rho' '0.8' \
 '--ncore' '10' \
 '--niter' '100' \
-'--alpha' '0.9' \
+'--alpha' '0.9' '0.95' '1.00' \
 '--heatmap' 'True' \
 '--threshold' '10'
+'--dir' './'
 ```
 
 **Scenario 3 : >=3 sides, unspecified parameters**
@@ -72,7 +74,8 @@ $ python BiTSC.py
 '--rho' '0.8' \
 '--ncore' '10' \
 '--niter' '100' \
-'--alpha' '0.9' \
+'--alpha' '0.9' '0.95' '1.00' \
 '--heatmap' 'True' \
-'--threshold' '10'      
+'--threshold' '10'   
+'--dir' './'
 ```
