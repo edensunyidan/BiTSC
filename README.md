@@ -5,27 +5,27 @@
 * Ubuntu 16.04.6 LTS (GNU/Linux 4.4.0-157-generic x86_64)
 
 ## Input data files:
-| data file          | format     | description   |
-| :---               | :---       | :---          |
-| ```covariate```   | csv       | node covariate dataset. length  equals the number of species. length>=2. N arguments from the command line will be gathered together into a list|
-| ```edge```       | csv        | edge dataset. length equals equals the combinatorial of number of species. ${N \choose 2}$ N arguments from the command line will be gathered together into a list|
+| file            | format   | description   |
+| :---            | :---     | :---          |
+| ```covariate``` | csv      | node covariate dataset. Denote N as the length, N>=2| 
+| ```edge```      | csv      | edge dataset. Length = ${N \choose 2}$|
 
 ## Input parameters:
 | parameters       | type       | description |
 | :---             | :---       | :---         |
 | ```k```          | int        | \[K_0\] or \[K_min, K_max\]. Default=\[5, 50\]    |
-| ```kernel```     | string     | metric used when calculating kernel. Default = 'rbk'   |
-| ```tau```        | float      | vector containing values of $\tau$'s. Default = 1. otherwise, length equals equals the combinatorial of number of species. |
-| ```ncore```      | int        | number of cores used in parallel computation     |
-| ```niter```      | int        | number of sub-sampling procedures     |
-| ```alpha```      | float      | vector containing values of $\alpha$'s   |
-| ```heatmap```    | boolean    | heatmap of sub-consensus matrix. Default = False.      |
-| ```threshold```  | int        | minimum number of nodes on each side to appear in the sub-consensus matrix.      |
-| ```dir```        | string     | path to output folder directory  |
+| ```kernel```     | string     | metric used when calculating kernel. Default='rbk'   |
+| ```tau```        | float      | $\tau$'s. Length = ${N \choose 2}$. Default=1 |
+| ```ncore```      | int        | number of cores used in parallel computation. Default=10 |
+| ```niter```      | int        | number of sub-sampling iterations. Default=100 |
+| ```alpha```      | float      | $\alpha$'s. Default=\[0.90, 0.95, 1.00\] |
+| ```heatmap```    | boolean    | if True, will return the heatmap of sub-consensus matrix corresponding to each $\alpha$. Default=False|
+| ```threshold```  | int        | minimum number of nodes on each side to appear in the sub-consensus matrix. Default=10|
+| ```dir```        | string     | path to output folder. Default='./'|
 
 
 ## Output files:
-| output                 | format     | description |
+| file                 | format     | description |
 | :---                   | :---       | :---          |
 | ```result_alpha.txt```      | csv        | clustering result |
 |```alpha.pdf``` | pdf        | heatmap of the sub-consensus matrix corresponding to ```alpha``` |
@@ -52,7 +52,7 @@ $ python BiTSC.py \
 '--niter' '100' \
 '--alpha' '0.9' \
 '--heatmap' 'True' \
-'--threshold' ' 10'
+'--threshold' '10'
 ```
 
 **Scenario 3 : >=3 sides, unspecified parameters**
@@ -74,5 +74,5 @@ $ python BiTSC.py
 '--niter' '100' \
 '--alpha' '0.9' \
 '--heatmap' 'True' \
-'--threshold' ' 10'      
+'--threshold' '10'      
 ```
