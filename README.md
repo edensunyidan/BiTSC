@@ -28,7 +28,7 @@
 ## Output files:
 | file                 | format     | description |
 | :---                   | :---       | :---          |
-| ```result_alpha.txt```      | csv        | clustering result |
+| ```result_alpha.txt```      | txt       | clustering result |
 |```alpha.pdf``` | pdf        | heatmap of the sub-consensus matrix corresponding to ```alpha``` |
 
 
