@@ -35,13 +35,13 @@
 
 **Scenario 1 : 2 sides, unspecified parameters**
 ```
-$ python3 BiTSC.py \
+$ python BiTSC.py \
 '--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' \ 
 '--edge' 'edge_12.csv' 'edge_13.csv' 'edge_23.csv'    
 ```
 **Scenario 2 : 2 sides, specified parameters**
 ```
-$ python3 BiTSC.py \
+$ python BiTSC.py \
 '--covariate' 'cov_1.csv' 'cov_2.csv' \
 '--edge' 'edge_12.csv' \
 '--k' '10' '50' \
@@ -57,13 +57,13 @@ $ python3 BiTSC.py \
 
 **Scenario 3 : >=3 sides, unspecified parameters**
 ```
-$ python3 BiTSC.py \
+$ python BiTSC.py \
 '--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' \
 '--edge' 'edge_12.csv' 'edge_13.csv' 'edge_23.csv'   
 ```
 **Scenario 4 : >=3 sides, specified parameters**
 ```
-$ python3 BiTSC.py 
+$ python BiTSC.py 
 '--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' \
 '--edge' 'edge_12.csv' 'edge_13.csv' 'edge_23.csv' \
 '--k' '10' '50' \
