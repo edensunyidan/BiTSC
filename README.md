@@ -21,7 +21,7 @@
 | ```niter```      | int        | Number of sub-sampling iterations. Default=100 |
 | ```alpha```      | float      | $\alpha$'s. Default=\[0.90, 0.95, 1.00\] |
 | ```heatmap```    | bool    | If True, will return the heatmap of sub-consensus matrix corresponding to each $\alpha$. Default=False|
-| ```threshold```  | int        | Minimum number of nodes on each side to appear in the heatmap. Default=10|
+| ```threshold```  | int        | Minimum number of nodes on each side included in the heatmap. Default=10|
 | ```dir```        | string     | Path to output folder. Default='./'|
 
 
