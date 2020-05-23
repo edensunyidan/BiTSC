@@ -40,14 +40,38 @@ $ python3 BiTSC.py '--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv'
 ```
 **Scenario 2 : 2 sides, specified parameters**
 ```console
-$ python3 BiTSC.py '--covariate' 'cov_1.csv' 'cov_2.csv' '--edge' 'edge_12.csv' '--k' '10' '50' '--kernel' 'rbk' '--tau' '1' '1' '--rho' '0.8' '--ncore' '10' '--niter' '100' '--alpha' '0.9' '--heatmap' 'True' '--threshold' ' 10'
+$ python3 BiTSC.py \
+'--covariate' 'cov_1.csv' 'cov_2.csv' \
+'--edge' 'edge_12.csv' \
+'--k' '10' '50' \
+'--kernel' 'rbk' \
+'--tau' '1' '1' \
+'--rho' '0.8' \
+'--ncore' '10' \
+'--niter' '100' \
+'--alpha' '0.9' \
+'--heatmap' 'True' \
+'--threshold' ' 10'
 ```
 
 **Scenario 3 : >=3 sides, unspecified parameters**
 ```console
-$ python3 BiTSC.py '--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' '--edge' 'edge_12.csv' 'edge_13.csv' 'edge_23.csv'   
+$ python3 BiTSC.py \
+'--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' \
+'--edge' 'edge_12.csv' 'edge_13.csv' 'edge_23.csv'   
 ```
 **Scenario 4 : >=3 sides, specified parameters**
 ```console
-$ python3 BiTSC.py '--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' '--edge' 'edge_12.csv' 'edge_13.csv' 'edge_23.csv' '--k' '10' '50' '--kernel' 'rbk' '--tau' '1' '1' '1' '1' '1' '1' '--rho' '0.8' '--ncore' '10' '--niter' '100' '--alpha' '0.9' '--heatmap' 'True' '--threshold' ' 10'      
+$ python3 BiTSC.py 
+'--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' \
+'--edge' 'edge_12.csv' 'edge_13.csv' 'edge_23.csv' \
+'--k' '10' '50' \
+'--kernel' 'rbk' \
+'--tau' '1' '1' '1' '1' '1' '1' \
+'--rho' '0.8' \
+'--ncore' '10' \
+'--niter' '100' \
+'--alpha' '0.9' \
+'--heatmap' 'True' \
+'--threshold' ' 10'      
 ```
