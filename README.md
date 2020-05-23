@@ -36,8 +36,8 @@
 **Scenario 1 : 2 sides, unspecified parameters**
 ```
 $ python BiTSC.py \
-'--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' \ 
-'--edge' 'edge_12.csv' 'edge_13.csv' 'edge_23.csv'    
+'--covariate' 'cov_1.csv' 'cov_2.csv'  \ 
+'--edge' 'edge_12.csv'    
 ```
 **Scenario 2 : 2 sides, specified parameters**
 ```
