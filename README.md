@@ -34,13 +34,13 @@
 
 ## Examples
 
-**Scenario 1 : 2 sides, unspecified parameters**
+**Scenario 1: 2 sides, unspecified parameters**
 ```
 $ python BiTSC.py \
 '--covariate' 'cov_1.csv' 'cov_2.csv' \ 
 '--edge' 'edge_12.csv'    
 ```
-**Scenario 2 : 2 sides, specified parameters**
+**Scenario 2: 2 sides, specified parameters**
 ```
 $ python BiTSC.py \
 '--covariate' 'cov_1.csv' 'cov_2.csv' \
@@ -57,13 +57,13 @@ $ python BiTSC.py \
 '--dir' './'
 ```
 
-**Scenario 3 : >=3 sides, unspecified parameters**
+**Scenario 3: >=3 sides, unspecified parameters**
 ```
 $ python BiTSC.py \
 '--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' \
 '--edge' 'edge_12.csv' 'edge_13.csv' 'edge_23.csv'   
 ```
-**Scenario 4 : >=3 sides, specified parameters**
+**Scenario 4: >=3 sides, specified parameters**
 ```
 $ python BiTSC.py 
 '--covariate' 'cov_1.csv' 'cov_2.csv' 'cov_3.csv' \
