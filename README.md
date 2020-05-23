@@ -20,7 +20,7 @@
 | ```ncore```      | int        | number of cores used in parallel computation. Default=10 |
 | ```niter```      | int        | number of sub-sampling iterations. Default=100 |
 | ```alpha```      | float      | $\alpha$'s. Default=\[0.90, 0.95, 1.00\] |
-| ```heatmap```    | boolean    | if True, will return the heatmap of sub-consensus matrix corresponding to each $\alpha$. Default=False|
+| ```heatmap```    | bool    | if True, will return the heatmap of sub-consensus matrix corresponding to each $\alpha$. Default=False|
 | ```threshold```  | int        | minimum number of nodes on each side to appear in the sub-consensus matrix. Default=10|
 | ```dir```        | string     | path to output folder. Default='./'|
 
