@@ -4,13 +4,13 @@
 * Python 3.6.8
 * Ubuntu 16.04.6 LTS (GNU/Linux 4.4.0-157-generic x86_64)
 
-## Input data files:
+## Input data files
 | file            | format   | description   |
 | :---            | :---     | :---          |
 | ```covariate``` | csv      | node covariate dataset. Denote N as the length, N>=2| 
 | ```edge```      | csv      | edge dataset. Length=N(N-1)/2 |
 
-## Input parameters:
+## Input parameters
 | parameters       | type       | description |
 | :---             | :---       | :---         |
 | ```k```          | int        | \[K_0\] or \[K_min, K_max\]. Default=\[5, 50\]      |
@@ -25,7 +25,7 @@
 | ```dir```        | string     | path to output folder. Default='./'|
 
 
-## Output files:
+## Output files
 | file                 | format     | description |
 | :---                   | :---       | :---          |
 | ```result_alpha.txt```      | txt       | clustering result |
